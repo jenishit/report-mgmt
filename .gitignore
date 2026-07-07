@@ -1,0 +1,23 @@
+# Binary files
+/bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary
+*.test
+
+# Output file of the go coverage tool
+*.out
+
+# Dependency directories (if not using go modules)
+vendor/
+
+# IDE files (optional)
+.idea/
+*.swp
+*~   
+
+.env
