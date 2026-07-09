@@ -55,6 +55,14 @@ func main() {
 	userService := services.NewUserService(userRepo, roleService, profileService)
 	userHandler := http.NewUsersHandler(userService)
 
+	labRepo := repository.NewLabRepository(db)
+	labService := services.NewLabService(labRepo)
+	labHandler := http.NewLabHandler(labService)
+
+	labTestsRepo := repository.NewLabTestsRepository(db)
+	labTestsService := services.NewLabTestsService(labTestsRepo)
+	lasTestsHandler := http.NewLabTestsHandler(labTestsService)
+
 	router, err := http.NewRouter(
 		config,
 		tokenService,
@@ -62,6 +70,8 @@ func main() {
 		*userHandler,
 		*profileHandler,
 		*authHandler,
+		*labHandler,
+		*lasTestsHandler,
 	)
 
 	if err != nil {
