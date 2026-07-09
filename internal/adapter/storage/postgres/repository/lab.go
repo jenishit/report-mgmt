@@ -12,17 +12,17 @@ import (
 	"github.com/jenish-brainztechs/go-backend/internal/core/domain"
 )
 
-type SettingsRepository struct {
+type LabRepository struct {
 	DB *postgres.DB
 }
 
-func NewSettingsRepository(db *postgres.DB) *SettingsRepository {
-	return &SettingsRepository{
+func NewLabRepository(db *postgres.DB) *LabRepository {
+	return &LabRepository{
 		DB: db,
 	}
 }
 
-func (sr *SettingsRepository) UpsertSettings(ctx context.Context, s *domain.LabSettings, updatedBy uuid.UUID) error {
+func (sr *LabRepository) InsertLab(ctx context.Context, s *domain.LabSettings) error {
 	now := time.Now()
 
 	query, args, err := sq.
@@ -59,18 +59,18 @@ func (sr *SettingsRepository) UpsertSettings(ctx context.Context, s *domain.LabS
 	_, err = sr.DB.Exec(ctx, query, args...)
 
 	if err != nil {
-		return fmt.Errorf("upserting lab settings: %w", err)
+		return fmt.Errorf("inserting lab preference: %w", err)
 	}
 
 	return nil
 }
 
-func (sr *SettingsRepository) GetSettings(ctx context.Context) (*domain.LabSettings, error) {
+func (sr *LabRepository) GetLabByLabID(ctx context.Context, labID uuid.UUID) (*domain.LabSettings, error) {
 	var phone, email, tagline, address, registrationNo, reportFooter sql.NullString
 
 	query, args, err := sq.
 		Select(
-			"ID",
+			"id",
 			"lab_name",
 			"tagline",
 			"address",
@@ -78,7 +78,9 @@ func (sr *SettingsRepository) GetSettings(ctx context.Context) (*domain.LabSetti
 			"email",
 			"registration_no",
 			"report_footer",
+			"updated_by",
 		).From("lab_settings").
+		Where(sq.Eq{"id": labID}).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 
@@ -89,16 +91,17 @@ func (sr *SettingsRepository) GetSettings(ctx context.Context) (*domain.LabSetti
 
 	defer rows.Close() //Release resources after reading the rows
 
-	setting := &domain.LabSettings{}
+	lab := &domain.LabSettings{}
 	err = sr.DB.QueryRow(ctx, query, args...).Scan(
-		&setting.ID,
-		&setting.LabName,
+		&lab.ID,
+		&lab.LabName,
 		&tagline,
 		&address,
 		&phone,
 		&email,
 		&registrationNo,
 		&reportFooter,
+		&lab.UpdatedBy,
 	)
 
 	if err != nil {
@@ -106,23 +109,64 @@ func (sr *SettingsRepository) GetSettings(ctx context.Context) (*domain.LabSetti
 	}
 
 	if tagline.Valid {
-		setting.Tagline = &tagline.String
+		lab.Tagline = &tagline.String
 	}
 	if address.Valid {
-		setting.Address = &address.String
+		lab.Address = &address.String
 	}
 	if email.Valid {
-		setting.Email = &email.String
+		lab.Email = &email.String
 	}
 	if phone.Valid {
-		setting.Phone = &phone.String
+		lab.Phone = &phone.String
 	}
 	if registrationNo.Valid {
-		setting.RegistrationNo = &registrationNo.String
+		lab.RegistrationNo = &registrationNo.String
 	}
 	if reportFooter.Valid {
-		setting.ReportFooter = &reportFooter.String
+		lab.ReportFooter = &reportFooter.String
 	}
 
-	return setting, nil
+	return lab, nil
+}
+
+func (sr *LabRepository) UpdateLab(ctx context.Context, s *domain.LabSettings) error {
+	now := time.Now()
+
+	builder := sq.Update("lab_settings").
+		PlaceholderFormat(sq.Dollar).
+		Where(sq.Eq{"id": s.ID})
+
+	if s.LabName != "" {
+		builder = builder.Set("lab_name", s.LabName)
+	}
+	if s.Tagline != nil {
+		builder = builder.Set("tagline", s.Tagline)
+	}
+	if s.Address != nil {
+		builder = builder.Set("address", s.Address)
+	}
+	if s.Phone != nil {
+		builder = builder.Set("phone", s.Phone)
+	}
+
+	if s.ReportFooter != nil {
+		builder = builder.Set("report_footer", s.ReportFooter)
+	}
+
+	builder = builder.Set("updated_at", now)
+	builder = builder.Set("updated_by", s.UpdatedBy)
+
+	query, args, err := builder.ToSql()
+
+	if err != nil {
+		return fmt.Errorf("failed to build SQL query: %w", err)
+	}
+
+	_, err = sr.DB.Exec(ctx, query, args...)
+	if err != nil {
+		return fmt.Errorf("failed to update profile: %w", err)
+	}
+
+	return nil
 }
