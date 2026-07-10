@@ -1,6 +1,7 @@
 package http
 
 import (
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jenish-brainztechs/go-backend/internal/adapter/handler/http/dto"
@@ -49,13 +50,13 @@ func (sh *LabHandler) InsertLab(ctx *gin.Context) {
 		UpdatedBy:      userPayload.UserId,
 	}
 
-	err := sh.svc.InsertLab(ctx, lab)
+	s, err := sh.svc.InsertLab(ctx, lab)
 
 	if err != nil {
 		handleError(ctx, err)
 		return
 	}
-	handleSuccess(ctx, gin.H{"message": "Lab settings inserted successfully"})
+	handleSuccess(ctx, s)
 }
 
 func (sh *LabHandler) GetLabByID(ctx *gin.Context) {
@@ -119,4 +120,18 @@ func (sh *LabHandler) UpdateLab(ctx *gin.Context) {
 		return
 	}
 	handleSuccess(ctx, gin.H{"message": "Lab settings updated successfully"})
+}
+
+func (sh *LabHandler) GetAllLabs(ctx *gin.Context) {
+	
+	res, err := sh.svc.GetAllLabs(ctx)
+
+	if err != nil {
+		handleError(ctx, err)
+		return
+	}
+
+	rsp := dto.LabsResponses(res)
+
+	handleSuccess(ctx, rsp)
 }

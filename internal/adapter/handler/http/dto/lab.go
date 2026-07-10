@@ -1,6 +1,9 @@
 package dto
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"github.com/jenish-brainztechs/go-backend/internal/core/domain"
+)
 
 type LabRequest struct {
 	LabName        string `json:"lab_name" binding:"required"`
@@ -22,4 +25,37 @@ type LabResponse struct {
 	RegistrationNo string    `json:"registration_no"`
 	ReportFooter   string    `json:"report_footer"`
 	UpdatedBy      uuid.UUID `json:"updated_by"`
+}
+
+func LabsResponse(l *domain.LabSettings) *LabResponse {
+	return &LabResponse{
+		ID:             l.ID,
+		LabName:        l.LabName,
+		Tagline:        *l.Tagline,
+		Address:        *l.Address,
+		Phone:          *l.Phone,
+		Email:          *l.Email,
+		RegistrationNo: *l.RegistrationNo,
+		ReportFooter:   *l.ReportFooter,
+		UpdatedBy:      l.UpdatedBy,
+	}
+}
+
+func LabsResponses(l []*domain.LabSettings) []*LabResponse {
+	labs := make([]*LabResponse, 0, len(l))
+
+	for _, lab := range l {
+		labs = append(labs, &LabResponse{
+			ID:             lab.ID,
+			LabName:        lab.LabName,
+			Tagline:        *lab.Tagline,
+			Address:        *lab.Address,
+			Phone:          *lab.Phone,
+			Email:          *lab.Email,
+			RegistrationNo: *lab.RegistrationNo,
+			ReportFooter:   *lab.ReportFooter,
+			UpdatedBy:      lab.UpdatedBy,
+		})
+	}
+	return labs
 }
