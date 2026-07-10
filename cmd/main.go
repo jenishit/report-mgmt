@@ -63,6 +63,14 @@ func main() {
 	labTestsService := services.NewLabTestsService(labTestsRepo)
 	lasTestsHandler := http.NewLabTestsHandler(labTestsService)
 
+	docRepo := repository.NewDoctorRepository(db)
+	docService := services.NewDoctorService(docRepo)
+	docHandler := http.NewDoctorHandler(docService)
+
+	ptRepo := repository.NewPatientRepository(db)
+	ptService := services.NewPatientService(ptRepo)
+	ptHandler := http.NewPatientHandler(ptService)
+
 	router, err := http.NewRouter(
 		config,
 		tokenService,
@@ -72,6 +80,8 @@ func main() {
 		*authHandler,
 		*labHandler,
 		*lasTestsHandler,
+		*docHandler,
+		*ptHandler,
 	)
 
 	if err != nil {

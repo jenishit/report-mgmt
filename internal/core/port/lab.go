@@ -8,13 +8,15 @@ import (
 )
 
 type LabRepository interface {
-	InsertLab(ctx context.Context, s *domain.LabSettings) error
+	InsertLab(ctx context.Context, s *domain.LabSettings) (*domain.LabSettings, error)
 	GetLabByLabID(ctx context.Context, labID uuid.UUID) (*domain.LabSettings, error)
 	UpdateLab(ctx context.Context, s *domain.LabSettings) error
+	GetAllLabs(ctx context.Context) ([]*domain.LabSettings, error)
 }
 
 type LabService interface {
-	InsertLab(ctx context.Context, s *domain.LabSettings) error
+	InsertLab(ctx context.Context, s *domain.LabSettings) (*domain.LabSettings, error)
 	GetLabByLabID(ctx context.Context, labID uuid.UUID) (*domain.LabSettings, error)
 	UpdateLab(ctx context.Context, s *domain.LabSettings) error
+	GetAllLabs(ctx context.Context) ([]*domain.LabSettings, error)
 }

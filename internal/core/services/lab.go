@@ -18,7 +18,7 @@ func NewLabService(sr port.LabRepository) *LabService {
 	}
 }
 
-func (ss *LabService) InsertLab(ctx context.Context, s *domain.LabSettings) error {
+func (ss *LabService) InsertLab(ctx context.Context, s *domain.LabSettings) (*domain.LabSettings, error) {
 	return ss.repo.InsertLab(ctx, s)
 }
 
@@ -28,4 +28,8 @@ func (ss *LabService) GetLabByLabID(ctx context.Context, labID uuid.UUID) (*doma
 
 func (ss *LabService) UpdateLab(ctx context.Context, s *domain.LabSettings) error {
 	return ss.repo.UpdateLab(ctx, s)
+}
+
+func (ss *LabService) GetAllLabs(ctx context.Context) ([]*domain.LabSettings, error) {
+	return ss.repo.GetAllLabs(ctx)
 }

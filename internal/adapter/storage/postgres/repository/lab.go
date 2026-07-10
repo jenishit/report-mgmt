@@ -22,7 +22,7 @@ func NewLabRepository(db *postgres.DB) *LabRepository {
 	}
 }
 
-func (sr *LabRepository) InsertLab(ctx context.Context, s *domain.LabSettings) error {
+func (sr *LabRepository) InsertLab(ctx context.Context, s *domain.LabSettings) (*domain.LabSettings, error) {
 	now := time.Now()
 
 	query, args, err := sq.
@@ -49,20 +49,27 @@ func (sr *LabRepository) InsertLab(ctx context.Context, s *domain.LabSettings) e
 			now,
 			s.UpdatedBy,
 		).
+		Suffix(`RETURNING
+			id,
+			lab_name
+		`).
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 
 	if err != nil {
-		return fmt.Errorf("failed to build SQL query: %w", err)
+		return nil, fmt.Errorf("failed to build SQL query: %w", err)
 	}
 
-	_, err = sr.DB.Exec(ctx, query, args...)
+	err = sr.DB.QueryRow(ctx, query, args...).Scan(
+		&s.ID,
+		&s.LabName,
+	)
 
 	if err != nil {
-		return fmt.Errorf("inserting lab preference: %w", err)
+		return nil, fmt.Errorf("inserting lab preference: %w", err)
 	}
 
-	return nil
+	return s, nil
 }
 
 func (sr *LabRepository) GetLabByLabID(ctx context.Context, labID uuid.UUID) (*domain.LabSettings, error) {
@@ -131,7 +138,6 @@ func (sr *LabRepository) GetLabByLabID(ctx context.Context, labID uuid.UUID) (*d
 }
 
 func (sr *LabRepository) UpdateLab(ctx context.Context, s *domain.LabSettings) error {
-	now := time.Now()
 
 	builder := sq.Update("lab_settings").
 		PlaceholderFormat(sq.Dollar).
@@ -154,7 +160,6 @@ func (sr *LabRepository) UpdateLab(ctx context.Context, s *domain.LabSettings) e
 		builder = builder.Set("report_footer", s.ReportFooter)
 	}
 
-	builder = builder.Set("updated_at", now)
 	builder = builder.Set("updated_by", s.UpdatedBy)
 
 	query, args, err := builder.ToSql()
@@ -169,4 +174,82 @@ func (sr *LabRepository) UpdateLab(ctx context.Context, s *domain.LabSettings) e
 	}
 
 	return nil
+}
+
+func (sr *LabRepository) GetAllLabs(ctx context.Context) ([]*domain.LabSettings, error) {
+	var phone, email, tagline, address, registrationNo, reportFooter sql.NullString
+
+	query, args, err := sq.
+		Select(
+			"id",
+			"lab_name",
+			"tagline",
+			"address",
+			"phone",
+			"email",
+			"registration_no",
+			"report_footer",
+			"updated_by",
+		).From("lab_settings").
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+
+	if err != nil {
+		return nil, err
+	}
+
+	rows, err := sr.DB.Query(ctx, query, args...)
+	if err != nil {
+		return nil, fmt.Errorf("querying labs: %w", err)
+	}
+
+	defer rows.Close()
+
+	var labs []*domain.LabSettings
+
+	for rows.Next() {
+		var lab domain.LabSettings
+
+		err := rows.Scan(
+			&lab.ID,
+			&lab.LabName,
+			&tagline,
+			&address,
+			&phone,
+			&email,
+			&registrationNo,
+			&reportFooter,
+			&lab.UpdatedBy,
+		)
+
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan row: %w", err)
+		}
+
+		if tagline.Valid {
+			lab.Tagline = &tagline.String
+		}
+		if address.Valid {
+			lab.Address = &address.String
+		}
+		if email.Valid {
+			lab.Email = &email.String
+		}
+		if phone.Valid {
+			lab.Phone = &phone.String
+		}
+		if registrationNo.Valid {
+			lab.RegistrationNo = &registrationNo.String
+		}
+		if reportFooter.Valid {
+			lab.ReportFooter = &reportFooter.String
+		}
+
+		labs = append(labs, &lab)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterating lab rows: %w", err)
+	}
+
+	return labs, nil
 }
