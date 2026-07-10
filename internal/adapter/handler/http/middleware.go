@@ -1,6 +1,8 @@
 package http
 
 import (
+	"net/http"
+	"net/url"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -15,16 +17,110 @@ const (
 	sessionContextKey       = "session_state"
 )
 
-func CORSMiddleware() gin.HandlerFunc {
+func CORSMiddleware(allowedOrigins string) gin.HandlerFunc {
+	originMap := map[string]bool{}
+	allowWildcard := false
+	wildcardSuffixes := []string{}
+
+	normalizeOrigin := func(value string) string {
+		return strings.TrimRight(strings.TrimSpace(value), "/")
+	}
+
+	parseOriginHost := func(value string) string {
+		if value == "" {
+			return ""
+		}
+		if strings.Contains(value, "://") {
+			if parsed, err := url.Parse(value); err == nil && parsed.Host != "" {
+				host := parsed.Hostname()
+				return strings.TrimSpace(host)
+			}
+		}
+		return strings.TrimSpace(value)
+	}
+
+	addWildcardSuffix := func(raw string) {
+		host := parseOriginHost(raw)
+		if strings.HasPrefix(host, "*.") {
+			suffix := strings.TrimPrefix(host, "*.")
+			if suffix != "" {
+				wildcardSuffixes = append(wildcardSuffixes, strings.ToLower(suffix))
+			}
+		}
+	}
+
+	for _, o := range strings.Split(allowedOrigins, ",") {
+		trimmed := normalizeOrigin(o)
+		if trimmed == "" {
+			continue
+		}
+		if trimmed == "*" {
+			allowWildcard = true
+			continue
+		}
+		if strings.Contains(trimmed, "*.") {
+			addWildcardSuffix(trimmed)
+			continue
+		}
+		originMap[trimmed] = true
+	}
+
 	return func(c *gin.Context) {
-		c.Header("Access-Control-Allow-Origin", "*")
-		c.Header("Access-Control-Allow-Credentials", "true")
-		c.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With, x-agent-code")
-		c.Header("Access-Control-Allow-Methods", "POST, HEAD, PATCH, OPTIONS, GET, PUT, DELETE")
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(204)
+		origin := normalizeOrigin(c.GetHeader("Origin"))
+		allowed := false
+
+		if allowWildcard {
+			allowed = true
+		} else if origin != "" && originMap[origin] {
+			allowed = true
+		} else if origin != "" && len(wildcardSuffixes) > 0 {
+			if parsed, err := url.Parse(origin); err == nil {
+				host := strings.ToLower(parsed.Hostname())
+				for _, suffix := range wildcardSuffixes {
+					if host != suffix && strings.HasSuffix(host, "."+suffix) {
+						allowed = true
+						break
+					}
+				}
+			}
+		} else if origin == "" {
+			// no Origin header (curl/server-to-server). Not a browser CORS request.
+			allowed = true
+		}
+
+		// If this is a browser request (Origin present) and it's not allowed, reject preflight
+		if origin != "" && !allowed && c.Request.Method == http.MethodOptions {
+			c.AbortWithStatus(http.StatusForbidden)
 			return
 		}
+
+		if allowed {
+			if allowWildcard {
+				// IMPORTANT: if you ever use credentials (cookies), DO NOT use "*"
+				c.Header("Access-Control-Allow-Origin", "*")
+			} else if origin != "" {
+				c.Header("Access-Control-Allow-Origin", origin)
+				c.Header("Access-Control-Allow-Credentials", "true")
+				c.Header("Vary", "Origin")
+			}
+
+			// Allow headers: echo what browser requested to avoid missing-header failures
+			if reqHeaders := c.GetHeader("Access-Control-Request-Headers"); reqHeaders != "" {
+				c.Header("Access-Control-Allow-Headers", reqHeaders)
+				c.Header("Vary", "Origin, Access-Control-Request-Headers")
+			} else {
+				c.Header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With")
+			}
+
+			c.Header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
+			c.Header("Access-Control-Max-Age", "3600")
+		}
+
+		if c.Request.Method == http.MethodOptions {
+			c.AbortWithStatus(http.StatusNoContent)
+			return
+		}
+
 		c.Next()
 	}
 }

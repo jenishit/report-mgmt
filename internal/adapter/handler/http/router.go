@@ -21,6 +21,7 @@ func NewRouter(
 	labTestsHandler LabTestsHandler,
 	docHandler DoctorHandler,
 	ptHandler PatientHandler,
+	visitHandler VisitHandler,
 ) (*Router, error) {
 
 	if config.App.Env == "production" {
@@ -28,6 +29,16 @@ func NewRouter(
 	}
 
 	router := gin.New()
+
+	// Middleware order matters - apply in this sequence:
+
+	// 2. For Lambda Function URL deployments, let AWS handle CORS if explicitly enabled.
+	if !config.HTTP.UseFunctionURLCORS {
+		allowedOrigins := config.HTTP.AllowedOrigins
+		router.Use(CORSMiddleware(allowedOrigins))
+	}
+
+	router.Use(gin.Recovery())
 
 	api := router.Group("/api")
 
@@ -119,6 +130,12 @@ func NewRouter(
 		pt.GET("/:id", ptHandler.GetPatientByID)
 		pt.GET("", ptHandler.GetPatients)
 		pt.PATCH("/:id", ptHandler.UpdatePatient)
+	}
+
+	visit := api.Group("/visit").Use(authMiddleware(token))
+	{
+		visit.POST("", visitHandler.CreateVisit)
+		visit.GET("/:id", visitHandler.GetVisitByID)
 	}
 
 	return &Router{
