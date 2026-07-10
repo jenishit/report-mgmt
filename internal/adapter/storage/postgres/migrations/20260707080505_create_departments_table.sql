@@ -38,6 +38,7 @@ CREATE TABLE panel_components (
 CREATE TABLE test_parameters (
     id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     test_id     UUID NOT NULL REFERENCES test_catalog(id) ON DELETE CASCADE,
+    parent_parameter_id UUID REFERENCES test_parameters(id),
     name        VARCHAR(100) NOT NULL,
     unit        VARCHAR(30),
     result_type VARCHAR(20) NOT NULL DEFAULT 'numeric'
@@ -62,9 +63,9 @@ CREATE TABLE reference_ranges (
 );
 
 -- +goose Down
-DROP TABLE departments;
-DROP TABLE panels;
-DROP TABLE test_catalog;
-DROP TABLE panel_components;
-DROP TABLE test_parameters;
 DROP TABLE reference_ranges;
+DROP TABLE test_parameters;
+DROP TABLE panel_components;
+DROP TABLE test_catalog;
+DROP TABLE panels;
+DROP TABLE departments;
