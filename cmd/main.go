@@ -75,6 +75,10 @@ func main() {
 	visitService := services.NewVisitService(visitRepo)
 	visitHandler := http.NewVisitHandler(visitService)
 
+	orderRepo := repository.NewOrderRepository(db)
+	orderService := services.NewOrderService(orderRepo)
+	orderHandler := http.NewOrderHandler(orderService)
+
 	router, err := http.NewRouter(
 		config,
 		tokenService,
@@ -87,6 +91,7 @@ func main() {
 		*docHandler,
 		*ptHandler,
 		*visitHandler,
+		*orderHandler,
 	)
 
 	if err != nil {

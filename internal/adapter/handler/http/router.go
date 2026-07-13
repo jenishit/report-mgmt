@@ -22,6 +22,7 @@ func NewRouter(
 	docHandler DoctorHandler,
 	ptHandler PatientHandler,
 	visitHandler VisitHandler,
+	orderHandler OrderHandler,
 ) (*Router, error) {
 
 	if config.App.Env == "production" {
@@ -136,6 +137,16 @@ func NewRouter(
 	{
 		visit.POST("", visitHandler.CreateVisit)
 		visit.GET("/:id", visitHandler.GetVisitByID)
+		visit.PATCH("/:id", visitHandler.UpdateVisitByID)
+		visit.GET("/patient/:id", visitHandler.GetVisitByPatientID)
+	}
+
+	order := api.Group("/order").Use(authMiddleware(token))
+	{
+		order.POST("", orderHandler.CreateOrder)
+		order.GET("/:id", orderHandler.GetOrderByID)
+		order.PATCH("/:id", orderHandler.UpdateOrder)
+		order.GET("/visit/:visit_id", orderHandler.GetOrdersByVisitID)
 	}
 
 	return &Router{

@@ -73,7 +73,61 @@ func (vh *VisitHandler) GetVisitByID(ctx *gin.Context) {
 		return
 	}
 
+	handleSuccess(ctx, res)
+}
+
+func (vh *VisitHandler) GetVisitByPatientID(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	uid, err := uuid.Parse(id)
+
+	if err != nil {
+		parseError(err)
+		return
+	}
+
+	res, err := vh.svc.GetVisitByPatientID(ctx, uid)
+
+	if err != nil {
+		handleError(ctx, err)
+		return
+	}
+
 	rsp := dto.VisitsResponse(res)
 
 	handleSuccess(ctx, rsp)
+}
+
+func (vh *VisitHandler) UpdateVisitByID(ctx *gin.Context) {
+	ID := ctx.Param("id")
+	vID, err := uuid.Parse(ID)
+	if err != nil {
+		handleError(ctx, domain.ErrInvalidUUID)
+		return
+	}
+
+	var req dto.VisitRequest
+
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		validationError(ctx, err)
+		return
+	}
+
+	vis := &domain.Visit{
+		ID:        vID,
+		VisitNo:   req.VisitNo,
+		PatientID: req.PatientID,
+		DoctorID:  req.DoctorID,
+		Status:    domain.Status(req.Status),
+		IsDeleted: req.IsDeleted,
+	}
+
+	err = vh.svc.UpdateVisitByID(ctx, vis)
+
+	if err != nil {
+		handleError(ctx, err)
+		return
+	}
+
+	handleSuccess(ctx, gin.H{"message": "Visit Updated successfully"})
 }

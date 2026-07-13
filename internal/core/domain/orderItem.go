@@ -10,7 +10,7 @@ type OrderStatus string
 
 const (
 	Complete      OrderStatus = "completed"
-	Collected     OrderStatus = "colledtec"
+	Collected     OrderStatus = "collected"
 	ResultEntered OrderStatus = "result_entered"
 )
 
