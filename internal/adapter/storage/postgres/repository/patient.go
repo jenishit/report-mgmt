@@ -20,7 +20,7 @@ func NewPatientRepository(db *postgres.DB) *PatientRepository {
 	}
 }
 
-func (dr *PatientRepository) CreatePatient(ctx context.Context, pt *domain.Patient) (*domain.Patient, error) {
+func (pr *PatientRepository) CreatePatient(ctx context.Context, pt *domain.Patient) (*domain.Patient, error) {
 	query, args, err := sq.
 		Insert("patients").
 		Columns(
@@ -54,7 +54,7 @@ func (dr *PatientRepository) CreatePatient(ctx context.Context, pt *domain.Patie
 		return nil, fmt.Errorf("PatientRepo.CreatePatient build: %w", err)
 	}
 
-	err = dr.DB.QueryRow(ctx, query, args...).Scan(
+	err = pr.DB.QueryRow(ctx, query, args...).Scan(
 		&pt.ID,
 	)
 
@@ -65,7 +65,7 @@ func (dr *PatientRepository) CreatePatient(ctx context.Context, pt *domain.Patie
 	return pt, nil
 }
 
-func (dr *PatientRepository) GetPatientByID(ctx context.Context, id uuid.UUID) (*domain.Patient, error) {
+func (pr *PatientRepository) GetPatientByID(ctx context.Context, id uuid.UUID) (*domain.Patient, error) {
 	query, args, err := sq.
 		Select(
 			"id",
@@ -83,7 +83,7 @@ func (dr *PatientRepository) GetPatientByID(ctx context.Context, id uuid.UUID) (
 		PlaceholderFormat(sq.Dollar).
 		ToSql()
 
-	rows, err := dr.DB.Query(ctx, query, args...)
+	rows, err := pr.DB.Query(ctx, query, args...)
 
 	if err != nil {
 		return nil, err
@@ -93,7 +93,7 @@ func (dr *PatientRepository) GetPatientByID(ctx context.Context, id uuid.UUID) (
 
 	pt := &domain.Patient{}
 
-	err = dr.DB.QueryRow(ctx, query, args...).Scan(
+	err = pr.DB.QueryRow(ctx, query, args...).Scan(
 		&pt.ID,
 		&pt.FirstName,
 		&pt.LastName,
@@ -113,7 +113,7 @@ func (dr *PatientRepository) GetPatientByID(ctx context.Context, id uuid.UUID) (
 	return pt, nil
 }
 
-func (dr *PatientRepository) GetPatients(ctx context.Context) ([]*domain.Patient, error) {
+func (pr *PatientRepository) GetPatients(ctx context.Context) ([]*domain.Patient, error) {
 	query, args, err := sq.
 		Select(
 			"id",
@@ -134,17 +134,17 @@ func (dr *PatientRepository) GetPatients(ctx context.Context) ([]*domain.Patient
 		return nil, err
 	}
 
-	rows, err := dr.DB.Query(ctx, query, args...)
+	rows, err := pr.DB.Query(ctx, query, args...)
 	if err != nil {
-		return nil, fmt.Errorf("querying doctors: %w", err)
+		return nil, fmt.Errorf("querying patients: %w", err)
 	}
 	defer rows.Close()
 
-	var docs []*domain.Patient
+	var pts []*domain.Patient
 
 	for rows.Next() {
 		pt := &domain.Patient{}
-		err = dr.DB.QueryRow(ctx, query, args...).Scan(
+		err = rows.Scan(
 			&pt.ID,
 			&pt.FirstName,
 			&pt.LastName,
@@ -161,17 +161,17 @@ func (dr *PatientRepository) GetPatients(ctx context.Context) ([]*domain.Patient
 			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
 
-		docs = append(docs, pt)
+		pts = append(pts, pt)
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, fmt.Errorf("iterating doctors rows: %w", err)
+		return nil, fmt.Errorf("iterating patients rows: %w", err)
 	}
 
-	return docs, nil
+	return pts, nil
 }
 
-func (dr *PatientRepository) UpdatePatient(ctx context.Context, pt *domain.Patient) error {
+func (pr *PatientRepository) UpdatePatient(ctx context.Context, pt *domain.Patient) error {
 	builder := sq.Update("patients").
 		PlaceholderFormat(sq.Dollar).
 		Where(sq.Eq{"id": pt.ID})
@@ -216,7 +216,7 @@ func (dr *PatientRepository) UpdatePatient(ctx context.Context, pt *domain.Patie
 		return fmt.Errorf("failed to build SQL query: %w", err)
 	}
 
-	_, err = dr.DB.Exec(ctx, query, args...)
+	_, err = pr.DB.Exec(ctx, query, args...)
 	if err != nil {
 		return fmt.Errorf("failed to update patient: %w", err)
 	}
