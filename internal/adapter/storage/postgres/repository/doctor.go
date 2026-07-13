@@ -134,7 +134,7 @@ func (dr *DoctorRepository) GetDoctors(ctx context.Context) ([]*domain.Doctor, e
 
 	for rows.Next() {
 		doc := &domain.Doctor{}
-		err = dr.DB.QueryRow(ctx, query, args...).Scan(
+		err = rows.Scan(
 			&doc.ID,
 			&doc.FirstName,
 			&doc.LastName,

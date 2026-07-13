@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>/ — graphify tree viewer</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      margin: 20px 0 0 24px;
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: #1e3a56;
+    }
+    .controls {
+      margin: 20px 0 15px 24px;
+    }
+    button {
+      margin-right: 10px;
+      padding: 8px 18px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s ease-in-out;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    button:active {
+      background: #004085;
+    }
+    #tree-container {
+      width: calc(100vw - 48px); /* Adjust for body margin/padding */
+      height: 85vh;
+      overflow: auto;
+      border-radius: 8px;
+      background: #fff;
+      margin-left: 24px;
+      margin-right: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border: 1px solid #ddd;
+    }
+    svg {
+      background: #fff;
+      border-radius: 8px;
+      display: block; /* Important for D3 */
+    }
+    .node circle {
+      stroke-width: 2.5px;
+    }
+    .node text { /* Base style for the <text> container */
+      font: 13px 'Segoe UI', sans-serif;
+      paint-order: stroke fill; /* Ensures text is readable over lines */
+      stroke: #fff; /* White halo */
+      stroke-width: 3px; /* Halo thickness */
+      stroke-linejoin: round;
+      stroke-opacity: 0.85; /* Halo opacity */
+    }
+    .link {
+      fill: none;
+      stroke-opacity: 0.7;
+      stroke-width: 2px;
+    }
+  </style>
+</head>
+<body>
+  <h1>/ — Knowledge Graph</h1>
+  <div class="controls">
+    <button onclick="expandAll()">Expand All</button>
+    <button onclick="collapseAll()">Collapse All</button>
+    <button onclick="resetView()">Reset View</button>
+  </div>
+  <div id="tree-container">
+    <svg id="tree-svg" width="6000" height="8000"></svg>
+  </div>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script>
+    const initialJsonData = {"name":"/","total_count":447,"children":[{"name":"cmd","total_count":1,"children":[{"name":"main.go","total_count":1,"children":[{"name":"main()","total_count":1,"children":[]}]}]},{"name":"go.mod","total_count":1,"children":[{"name":"github.com/jenish-brainztechs/go-backend","total_count":1,"children":[]}]},{"name":"internal","total_count":445,"children":[{"name":"adapter","total_count":297,"children":[{"name":"auth","total_count":4,"children":[{"name":"jwt","total_count":4,"children":[{"name":"jwt.go","total_count":4,"children":[{"name":".CreateAccessToken()","total_count":1,"children":[]},{"name":".VerifyAccessToken()","total_count":1,"children":[]},{"name":"JWTToken","total_count":1,"children":[]},{"name":"New()","total_count":1,"children":[]}]}]}]},{"name":"config","total_count":27,"children":[{"name":"config.go","total_count":27,"children":[{"name":"App","total_count":1,"children":[]},{"name":"Cache","total_count":1,"children":[]},{"name":"Container","total_count":1,"children":[]},{"name":"DB","total_count":1,"children":[]},{"name":"envOrDefault()","total_count":1,"children":[]},{"name":"firstSecretString()","total_count":1,"children":[]},{"name":"HTTP","total_count":1,"children":[]},{"name":"IsLambdaRuntime()","total_count":1,"children":[]},{"name":"New()","total_count":1,"children":[]},{"name":"normalizeDatabaseConnection()","total_count":1,"children":[]},{"name":"parseBool()","total_count":1,"children":[]},{"name":"parseDurationOrDefault()","total_count":1,"children":[]},{"name":"parseFloatOrDefault()","total_count":1,"children":[]},{"name":"parseIntOrDefault()","total_count":1,"children":[]},{"name":"Redis","total_count":1,"children":[]},{"name":"Refresh","total_count":1,"children":[]},{"name":"resolveDatabaseConnection()","total_count":1,"children":[]},{"name":"resolveDatabaseField()","total_count":1,"children":[]},{"name":"resolveDatabaseHost()","total_count":1,"children":[]},{"name":"resolveDatabaseName()","total_count":1,"children":[]},{"name":"resolveDatabasePort()","total_count":1,"children":[]},{"name":"resolveDatabaseSSLMode()","total_count":1,"children":[]},{"name":"resolveDatabaseUser()","total_count":1,"children":[]},{"name":"secretValue()","total_count":1,"children":[]},{"name":"Session","total_count":1,"children":[]},{"name":"Token","total_count":1,"children":[]},{"name":"validateRuntimeDBConfig()","total_count":1,"children":[]}]}]},{"name":"handler","total_count":163,"children":[{"name":"http","total_count":163,"children":[{"name":"auth.go","total_count":3,"children":[{"name":".Login()","total_count":1,"children":[]},{"name":"AuthHandler","total_count":1,"children":[]},{"name":"NewAuthHandler()","total_count":1,"children":[]}]},{"name":"doctor.go","total_count":6,"children":[{"name":".CreateDoctor()","total_count":1,"children":[]},{"name":".GetDoctorByID()","total_count":1,"children":[]},{"name":".GetDoctors()","total_count":1,"children":[]},{"name":".UpdateDoctor()","total_count":1,"children":[]},{"name":"DoctorHandler","total_count":1,"children":[]},{"name":"NewDoctorHandler()","total_count":1,"children":[]}]},{"name":"dto","total_count":71,"children":[{"name":"auth.go","total_count":3,"children":[{"name":"LoginRequest","total_count":1,"children":[]},{"name":"LoginResponse","total_count":1,"children":[]},{"name":"ToLoginResponse()","total_count":1,"children":[]}]},{"name":"doctor.go","total_count":4,"children":[{"name":"CreateDoctor","total_count":1,"children":[]},{"name":"DocResponse()","total_count":1,"children":[]},{"name":"DocResponses()","total_count":1,"children":[]},{"name":"DoctorResponse","total_count":1,"children":[]}]},{"name":"lab.go","total_count":4,"children":[{"name":"LabRequest","total_count":1,"children":[]},{"name":"LabResponse","total_count":1,"children":[]},{"name":"LabsResponse()","total_count":1,"children":[]},{"name":"LabsResponses()","total_count":1,"children":[]}]},{"name":"labTests.go","total_count":24,"children":[{"name":"DepartmentRequest","total_count":1,"children":[]},{"name":"DepartmentResponse","total_count":1,"children":[]},{"name":"DeptResponse()","total_count":1,"children":[]},{"name":"DeptsResponse()","total_count":1,"children":[]},{"name":"GetCatalogResponse()","total_count":1,"children":[]},{"name":"GetCatalogsResponse()","total_count":1,"children":[]},{"name":"GetPanelComponentResponse()","total_count":1,"children":[]},{"name":"GetPanelComponentsResponse()","total_count":1,"children":[]},{"name":"GetPanelResponse()","total_count":1,"children":[]},{"name":"GetPanelsResponse()","total_count":1,"children":[]},{"name":"GetReferenceRangeResponse()","total_count":1,"children":[]},{"name":"GetReferenceRangesResponse()","total_count":1,"children":[]},{"name":"GetTestParameterResponse()","total_count":1,"children":[]},{"name":"GetTestParametersResponse()","total_count":1,"children":[]},{"name":"PanelComponentRequest","total_count":1,"children":[]},{"name":"PanelComponentResponse","total_count":1,"children":[]},{"name":"PanelRequest","total_count":1,"children":[]},{"name":"PanelResponse","total_count":1,"children":[]},{"name":"ReferenceRangeRequest","total_count":1,"children":[]},{"name":"ReferenceRangeResponse","total_count":1,"children":[]},{"name":"TestCatalogRequest","total_count":1,"children":[]},{"name":"TestCatalogResponse","total_count":1,"children":[]},{"name":"TestParameterRequest","total_count":1,"children":[]},{"name":"TestParameterResponse","total_count":1,"children":[]}]},{"name":"orderItem.go","total_count":5,"children":[{"name":"CreateOrderRequest","total_count":1,"children":[]},{"name":"OrderResponse","total_count":1,"children":[]},{"name":"OrderResponseFromDomain()","total_count":1,"children":[]},{"name":"OrdersResponseFromDomain()","total_count":1,"children":[]},{"name":"UpdateOrderRequest","total_count":1,"children":[]}]},{"name":"patient.go","total_count":4,"children":[{"name":"CreatePatient","total_count":1,"children":[]},{"name":"PatientResponse","total_count":1,"children":[]},{"name":"PtResponse()","total_count":1,"children":[]},{"name":"PtResponses()","total_count":1,"children":[]}]},{"name":"profile.go","total_count":4,"children":[{"name":"NewProfileResponse()","total_count":1,"children":[]},{"name":"NewProfileResponses()","total_count":1,"children":[]},{"name":"ProfileResponse","total_count":1,"children":[]},{"name":"UpdateProfileRequest","total_count":1,"children":[]}]},{"name":"report.go","total_count":9,"children":[{"name":"CreateReportRequest","total_count":1,"children":[]},{"name":"ReportPrintRequest","total_count":1,"children":[]},{"name":"ReportPrintResponse","total_count":1,"children":[]},{"name":"ReportPrintResponseFromDomain()","total_count":1,"children":[]},{"name":"ReportPrintsResponseFromDomain()","total_count":1,"children":[]},{"name":"ReportResponse","total_count":1,"children":[]},{"name":"ReportResponseFromDomain()","total_count":1,"children":[]},{"name":"ReportsResponseFromDomain()","total_count":1,"children":[]},{"name":"UpdateReportRequest","total_count":1,"children":[]}]},{"name":"result.go","total_count":7,"children":[{"name":"BatchCreateResultRequest","total_count":1,"children":[]},{"name":"BatchResultItem","total_count":1,"children":[]},{"name":"CreateResultRequest","total_count":1,"children":[]},{"name":"ResultResponse","total_count":1,"children":[]},{"name":"ResultResponseFromDomain()","total_count":1,"children":[]},{"name":"ResultsResponseFromDomain()","total_count":1,"children":[]},{"name":"UpdateResultRequest","total_count":1,"children":[]}]},{"name":"role.go","total_count":1,"children":[{"name":"CreateRole","total_count":1,"children":[]}]},{"name":"users.go","total_count":1,"children":[{"name":"CreateUser","total_count":1,"children":[]}]},{"name":"visit.go","total_count":5,"children":[{"name":"CreateVisit","total_count":1,"children":[]},{"name":"ListVisits","total_count":1,"children":[]},{"name":"VisitRequest","total_count":1,"children":[]},{"name":"VisitResponse()","total_count":1,"children":[]},{"name":"VisitsResponse()","total_count":1,"children":[]}]}]},{"name":"lab.go","total_count":6,"children":[{"name":".GetAllLabs()","total_count":1,"children":[]},{"name":".GetLabByID()","total_count":1,"children":[]},{"name":".InsertLab()","total_count":1,"children":[]},{"name":".UpdateLab()","total_count":1,"children":[]},{"name":"LabHandler","total_count":1,"children":[]},{"name":"NewLabHandler()","total_count":1,"children":[]}]},{"name":"labTests.go","total_count":19,"children":[{"name":".CreateDepartment()","total_count":1,"children":[]},{"name":".CreatePanel()","total_count":1,"children":[]},{"name":".CreatePanelComponent()","total_count":1,"children":[]},{"name":".CreateReferenceRange()","total_count":1,"children":[]},{"name":".CreateTestCatalog()","total_count":1,"children":[]},{"name":".CreateTestParameter()","total_count":1,"children":[]},{"name":".GetDepartments()","total_count":1,"children":[]},{"name":".GetPanelComponentsByPanelID()","total_count":1,"children":[]},{"name":".GetPanelsByDepartmentID()","total_count":1,"children":[]},{"name":".GetReferenceRangesByTestParameterID()","total_count":1,"children":[]},{"name":".GetTestCatalogByDepartmentID()","total_count":1,"children":[]},{"name":".GetTestParametersByTestCatalogID()","total_count":1,"children":[]},{"name":".UpdateDepartment()","total_count":1,"children":[]},{"name":".UpdatePanel()","total_count":1,"children":[]},{"name":".UpdateReferenceRange()","total_count":1,"children":[]},{"name":".UpdateTestCatalog()","total_count":1,"children":[]},{"name":".UpdateTestParameter()","total_count":1,"children":[]},{"name":"LabTestsHandler","total_count":1,"children":[]},{"name":"NewLabTestsHandler()","total_count":1,"children":[]}]},{"name":"middleware.go","total_count":3,"children":[{"name":"adminMiddleware()","total_count":1,"children":[]},{"name":"authMiddleware()","total_count":1,"children":[]},{"name":"CORSMiddleware()","total_count":1,"children":[]}]},{"name":"orderItem.go","total_count":6,"children":[{"name":".CreateOrder()","total_count":1,"children":[]},{"name":".GetOrderByID()","total_count":1,"children":[]},{"name":".GetOrdersByVisitID()","total_count":1,"children":[]},{"name":".UpdateOrder()","total_count":1,"children":[]},{"name":"NewOrderHandler()","total_count":1,"children":[]},{"name":"OrderHandler","total_count":1,"children":[]}]},{"name":"patient.go","total_count":6,"children":[{"name":".CreatePatient()","total_count":1,"children":[]},{"name":".GetPatientByID()","total_count":1,"children":[]},{"name":".GetPatients()","total_count":1,"children":[]},{"name":".UpdatePatient()","total_count":1,"children":[]},{"name":"NewPatientHandler()","total_count":1,"children":[]},{"name":"PatientHandler","total_count":1,"children":[]}]},{"name":"profile.go","total_count":5,"children":[{"name":".GetProfileByID()","total_count":1,"children":[]},{"name":".GetProfiles()","total_count":1,"children":[]},{"name":".UpdateProfileByUserID()","total_count":1,"children":[]},{"name":"NewProfileHandler()","total_count":1,"children":[]},{"name":"ProfileHandler","total_count":1,"children":[]}]},{"name":"report.go","total_count":8,"children":[{"name":".CreateReport()","total_count":1,"children":[]},{"name":".CreateReportPrint()","total_count":1,"children":[]},{"name":".GetReportByID()","total_count":1,"children":[]},{"name":".GetReportPrints()","total_count":1,"children":[]},{"name":".GetReportsByVisitID()","total_count":1,"children":[]},{"name":".UpdateReport()","total_count":1,"children":[]},{"name":"NewReportHandler()","total_count":1,"children":[]},{"name":"ReportHandler","total_count":1,"children":[]}]},{"name":"response.go","total_count":9,"children":[{"name":"errorResponse","total_count":1,"children":[]},{"name":"handleAbort()","total_count":1,"children":[]},{"name":"handleError()","total_count":1,"children":[]},{"name":"handleSuccess()","total_count":1,"children":[]},{"name":"newErrorResponse()","total_count":1,"children":[]},{"name":"newResponse()","total_count":1,"children":[]},{"name":"parseError()","total_count":1,"children":[]},{"name":"response","total_count":1,"children":[]},{"name":"validationError()","total_count":1,"children":[]}]},{"name":"result.go","total_count":6,"children":[{"name":".CreateResult()","total_count":1,"children":[]},{"name":".GetResultByID()","total_count":1,"children":[]},{"name":".GetResultsByOrderID()","total_count":1,"children":[]},{"name":".UpdateResult()","total_count":1,"children":[]},{"name":"NewResultHandler()","total_count":1,"children":[]},{"name":"ResultHandler","total_count":1,"children":[]}]},{"name":"role.go","total_count":3,"children":[{"name":".CreateRole()","total_count":1,"children":[]},{"name":"NewRoleHandler()","total_count":1,"children":[]},{"name":"RoleHandler","total_count":1,"children":[]}]},{"name":"router.go","total_count":3,"children":[{"name":".Serve()","total_count":1,"children":[]},{"name":"NewRouter()","total_count":1,"children":[]},{"name":"Router","total_count":1,"children":[]}]},{"name":"users.go","total_count":3,"children":[{"name":".CreateUser()","total_count":1,"children":[]},{"name":"NewUsersHandler()","total_count":1,"children":[]},{"name":"UserHandler","total_count":1,"children":[]}]},{"name":"visit.go","total_count":6,"children":[{"name":".CreateVisit()","total_count":1,"children":[]},{"name":".GetVisitByID()","total_count":1,"children":[]},{"name":".GetVisitByPatientID()","total_count":1,"children":[]},{"name":".UpdateVisitByID()","total_count":1,"children":[]},{"name":"NewVisitHandler()","total_count":1,"children":[]},{"name":"VisitHandler","total_count":1,"children":[]}]}]}]},{"name":"storage","total_count":103,"children":[{"name":"postgres","total_count":103,"children":[{"name":"db.go","total_count":5,"children":[{"name":".Close()","total_count":1,"children":[]},{"name":".ErrorCode()","total_count":1,"children":[]},{"name":".Migrate()","total_count":1,"children":[]},{"name":"DB","total_count":1,"children":[]},{"name":"New()","total_count":1,"children":[]}]},{"name":"migrations","total_count":17,"children":[{"name":"20260702094601_create_role_table.sql","total_count":1,"children":[{"name":"role","total_count":1,"children":[]}]},{"name":"20260702101734_create_user_table.sql","total_count":2,"children":[{"name":"profile","total_count":1,"children":[]},{"name":"users","total_count":1,"children":[]}]},{"name":"20260706113407_create_lab_settings.sql","total_count":1,"children":[{"name":"lab_settings","total_count":1,"children":[]}]},{"name":"20260707080505_create_departments_table.sql","total_count":6,"children":[{"name":"departments","total_count":1,"children":[]},{"name":"panel_components","total_count":1,"children":[]},{"name":"panels","total_count":1,"children":[]},{"name":"reference_ranges","total_count":1,"children":[]},{"name":"test_catalog","total_count":1,"children":[]},{"name":"test_parameters","total_count":1,"children":[]}]},{"name":"20260709063003_other_users_table.sql","total_count":2,"children":[{"name":"doctors","total_count":1,"children":[]},{"name":"patients","total_count":1,"children":[]}]},{"name":"20260710073046_visit_result_table.sql","total_count":3,"children":[{"name":"order_item","total_count":1,"children":[]},{"name":"result","total_count":1,"children":[]},{"name":"visits","total_count":1,"children":[]}]},{"name":"20260713074207_report_table.sql","total_count":2,"children":[{"name":"report_print","total_count":1,"children":[]},{"name":"reports","total_count":1,"children":[]}]}]},{"name":"repository","total_count":81,"children":[{"name":"doctor.go","total_count":6,"children":[{"name":".CreateDoctor()","total_count":1,"children":[]},{"name":".GetDoctorByID()","total_count":1,"children":[]},{"name":".GetDoctors()","total_count":1,"children":[]},{"name":".UpdateDoctor()","total_count":1,"children":[]},{"name":"DoctorRepository","total_count":1,"children":[]},{"name":"NewDoctorRepository()","total_count":1,"children":[]}]},{"name":"helper.go","total_count":2,"children":[{"name":"nullString()","total_count":1,"children":[]},{"name":"nullUUID()","total_count":1,"children":[]}]},{"name":"lab.go","total_count":6,"children":[{"name":".GetAllLabs()","total_count":1,"children":[]},{"name":".GetLabByLabID()","total_count":1,"children":[]},{"name":".InsertLab()","total_count":1,"children":[]},{"name":".UpdateLab()","total_count":1,"children":[]},{"name":"LabRepository","total_count":1,"children":[]},{"name":"NewLabRepository()","total_count":1,"children":[]}]},{"name":"labTests.go","total_count":19,"children":[{"name":".CreateDepartment()","total_count":1,"children":[]},{"name":".CreatePanel()","total_count":1,"children":[]},{"name":".CreatePanelComponent()","total_count":1,"children":[]},{"name":".CreateReferenceRange()","total_count":1,"children":[]},{"name":".CreateTestCatalog()","total_count":1,"children":[]},{"name":".CreateTestParameter()","total_count":1,"children":[]},{"name":".GetDepartments()","total_count":1,"children":[]},{"name":".GetPanelComponentsByPanelID()","total_count":1,"children":[]},{"name":".GetPanelsByDepartmentID()","total_count":1,"children":[]},{"name":".GetReferenceRangesByTestParameterID()","total_count":1,"children":[]},{"name":".GetTestCatalogByDepartmentID()","total_count":1,"children":[]},{"name":".GetTestParametersByTestCatalogID()","total_count":1,"children":[]},{"name":".UpdateDepartment()","total_count":1,"children":[]},{"name":".UpdatePanel()","total_count":1,"children":[]},{"name":".UpdateReferenceRange()","total_count":1,"children":[]},{"name":".UpdateTestCatalog()","total_count":1,"children":[]},{"name":".UpdateTestParameter()","total_count":1,"children":[]},{"name":"LabTestsRepository","total_count":1,"children":[]},{"name":"NewLabTestsRepository()","total_count":1,"children":[]}]},{"name":"orderItem.go","total_count":6,"children":[{"name":".CreateOrder()","total_count":1,"children":[]},{"name":".GetOrderByID()","total_count":1,"children":[]},{"name":".GetOrdersByVisitID()","total_count":1,"children":[]},{"name":".UpdateOrder()","total_count":1,"children":[]},{"name":"NewOrderRepository()","total_count":1,"children":[]},{"name":"OrderRepository","total_count":1,"children":[]}]},{"name":"patient.go","total_count":6,"children":[{"name":".CreatePatient()","total_count":1,"children":[]},{"name":".GetPatientByID()","total_count":1,"children":[]},{"name":".GetPatients()","total_count":1,"children":[]},{"name":".UpdatePatient()","total_count":1,"children":[]},{"name":"NewPatientRepository()","total_count":1,"children":[]},{"name":"PatientRepository","total_count":1,"children":[]}]},{"name":"profile.go","total_count":6,"children":[{"name":".CreateProfile()","total_count":1,"children":[]},{"name":".GetProfileByID()","total_count":1,"children":[]},{"name":".GetProfiles()","total_count":1,"children":[]},{"name":".UpdateProfileByUserID()","total_count":1,"children":[]},{"name":"NewProfileRepository()","total_count":1,"children":[]},{"name":"ProfileRepository","total_count":1,"children":[]}]},{"name":"report.go","total_count":8,"children":[{"name":".CreateReport()","total_count":1,"children":[]},{"name":".CreateReportPrint()","total_count":1,"children":[]},{"name":".GetReportByID()","total_count":1,"children":[]},{"name":".GetReportPrintsByReportID()","total_count":1,"children":[]},{"name":".GetReportsByVisitID()","total_count":1,"children":[]},{"name":".UpdateReport()","total_count":1,"children":[]},{"name":"NewReportRepository()","total_count":1,"children":[]},{"name":"ReportRepository","total_count":1,"children":[]}]},{"name":"result.go","total_count":7,"children":[{"name":".CreateResult()","total_count":1,"children":[]},{"name":".CreateResults()","total_count":1,"children":[]},{"name":".GetResultByID()","total_count":1,"children":[]},{"name":".GetResultsByOrderID()","total_count":1,"children":[]},{"name":".UpdateResult()","total_count":1,"children":[]},{"name":"NewResultRepository()","total_count":1,"children":[]},{"name":"ResultRepository","total_count":1,"children":[]}]},{"name":"role.go","total_count":5,"children":[{"name":".CreateRole()","total_count":1,"children":[]},{"name":".GetRoleIDByRoleName()","total_count":1,"children":[]},{"name":".GetRoleNameByRoleID()","total_count":1,"children":[]},{"name":"NewRoleRepository()","total_count":1,"children":[]},{"name":"RoleRepository","total_count":1,"children":[]}]},{"name":"users.go","total_count":4,"children":[{"name":".CreateUser()","total_count":1,"children":[]},{"name":".GetUserByEmail()","total_count":1,"children":[]},{"name":"NewUserRepository()","total_count":1,"children":[]},{"name":"UserRepository","total_count":1,"children":[]}]},{"name":"visit.go","total_count":6,"children":[{"name":".CreateVisit()","total_count":1,"children":[]},{"name":".GetVisitByID()","total_count":1,"children":[]},{"name":".GetVisitByPatientID()","total_count":1,"children":[]},{"name":".UpdateVisitByID()","total_count":1,"children":[]},{"name":"NewVisitRepository()","total_count":1,"children":[]},{"name":"VisitRepository","total_count":1,"children":[]}]}]}]}]}]},{"name":"core","total_count":148,"children":[{"name":"domain","total_count":42,"children":[{"name":"doctor.go","total_count":1,"children":[{"name":"Doctor","total_count":1,"children":[]}]},{"name":"lab.go","total_count":1,"children":[{"name":"LabSettings","total_count":1,"children":[]}]},{"name":"labTests.go","total_count":6,"children":[{"name":"Department","total_count":1,"children":[]},{"name":"PanelComponent","total_count":1,"children":[]},{"name":"Panels","total_count":1,"children":[]},{"name":"ReferenceRange","total_count":1,"children":[]},{"name":"TestCatalog","total_count":1,"children":[]},{"name":"TestParameter","total_count":1,"children":[]}]},{"name":"login.go","total_count":2,"children":[{"name":"Login","total_count":1,"children":[]},{"name":"LoginResponse","total_count":1,"children":[]}]},{"name":"orderItem.go","total_count":2,"children":[{"name":"Order","total_count":1,"children":[]},{"name":"OrderStatus","total_count":1,"children":[]}]},{"name":"patient.go","total_count":2,"children":[{"name":"Gender","total_count":1,"children":[]},{"name":"Patient","total_count":1,"children":[]}]},{"name":"profile.go","total_count":2,"children":[{"name":"GetProfileDetails","total_count":1,"children":[]},{"name":"Profile","total_count":1,"children":[]}]},{"name":"report.go","total_count":3,"children":[{"name":"Report","total_count":1,"children":[]},{"name":"ReportPrint","total_count":1,"children":[]},{"name":"ReportStatus","total_count":1,"children":[]}]},{"name":"result.go","total_count":2,"children":[{"name":"Flag","total_count":1,"children":[]},{"name":"Result","total_count":1,"children":[]}]},{"name":"tokenPayload.go","total_count":3,"children":[{"name":"RefreshTokenPayload","total_count":1,"children":[]},{"name":"SessionState","total_count":1,"children":[]},{"name":"TokenPayload","total_count":1,"children":[]}]},{"name":"users.go","total_count":5,"children":[{"name":"BasicDetails","total_count":1,"children":[]},{"name":"Role","total_count":1,"children":[]},{"name":"RoleUser","total_count":1,"children":[]},{"name":"User","total_count":1,"children":[]},{"name":"UserRole","total_count":1,"children":[]}]},{"name":"valueobjects","total_count":9,"children":[{"name":"password.go","total_count":9,"children":[{"name":".Hash()","total_count":1,"children":[]},{"name":".MarshalJSON()","total_count":1,"children":[]},{"name":".Matches()","total_count":1,"children":[]},{"name":".String()","total_count":1,"children":[]},{"name":".Verify()","total_count":1,"children":[]},{"name":"NewPassword()","total_count":1,"children":[]},{"name":"NewPasswordFromHash()","total_count":1,"children":[]},{"name":"Password","total_count":1,"children":[]},{"name":"ValidatePassword()","total_count":1,"children":[]}]}]},{"name":"visit.go","total_count":3,"children":[{"name":"ListVisit","total_count":1,"children":[]},{"name":"Status","total_count":1,"children":[]},{"name":"Visit","total_count":1,"children":[]}]},{"name":"errors.go","total_count":1,"children":[]}]},{"name":"port","total_count":24,"children":[{"name":"doctor.go","total_count":2,"children":[{"name":"DoctorRepository","total_count":1,"children":[]},{"name":"DoctorService","total_count":1,"children":[]}]},{"name":"lab.go","total_count":2,"children":[{"name":"LabRepository","total_count":1,"children":[]},{"name":"LabService","total_count":1,"children":[]}]},{"name":"labTests.go","total_count":2,"children":[{"name":"LabTestsRepository","total_count":1,"children":[]},{"name":"LabTestsService","total_count":1,"children":[]}]},{"name":"orderItem.go","total_count":2,"children":[{"name":"OrderRepository","total_count":1,"children":[]},{"name":"OrderService","total_count":1,"children":[]}]},{"name":"patient.go","total_count":2,"children":[{"name":"PatientRepository","total_count":1,"children":[]},{"name":"PatientService","total_count":1,"children":[]}]},{"name":"profile.go","total_count":2,"children":[{"name":"ProfileRepository","total_count":1,"children":[]},{"name":"ProfileService","total_count":1,"children":[]}]},{"name":"report.go","total_count":2,"children":[{"name":"ReportRepository","total_count":1,"children":[]},{"name":"ReportService","total_count":1,"children":[]}]},{"name":"result.go","total_count":2,"children":[{"name":"ResultRepository","total_count":1,"children":[]},{"name":"ResultService","total_count":1,"children":[]}]},{"name":"role.go","total_count":2,"children":[{"name":"RoleRepository","total_count":1,"children":[]},{"name":"RoleService","total_count":1,"children":[]}]},{"name":"tokenService.go","total_count":2,"children":[{"name":"AuthService","total_count":1,"children":[]},{"name":"TokenService","total_count":1,"children":[]}]},{"name":"users.go","total_count":2,"children":[{"name":"UserRepository","total_count":1,"children":[]},{"name":"UserService","total_count":1,"children":[]}]},{"name":"visit.go","total_count":2,"children":[{"name":"VisitRepository","total_count":1,"children":[]},{"name":"VisitService","total_count":1,"children":[]}]}]},{"name":"services","total_count":82,"children":[{"name":"auth.go","total_count":3,"children":[{"name":".Login()","total_count":1,"children":[]},{"name":"AuthService","total_count":1,"children":[]},{"name":"NewAuthService()","total_count":1,"children":[]}]},{"name":"doctor.go","total_count":6,"children":[{"name":".CreateDoctor()","total_count":1,"children":[]},{"name":".GetDoctorByID()","total_count":1,"children":[]},{"name":".GetDoctors()","total_count":1,"children":[]},{"name":".UpdateDoctor()","total_count":1,"children":[]},{"name":"DoctorService","total_count":1,"children":[]},{"name":"NewDoctorService()","total_count":1,"children":[]}]},{"name":"lab.go","total_count":6,"children":[{"name":".GetAllLabs()","total_count":1,"children":[]},{"name":".GetLabByLabID()","total_count":1,"children":[]},{"name":".InsertLab()","total_count":1,"children":[]},{"name":".UpdateLab()","total_count":1,"children":[]},{"name":"LabService","total_count":1,"children":[]},{"name":"NewLabService()","total_count":1,"children":[]}]},{"name":"labTests.go","total_count":19,"children":[{"name":".CreateDepartment()","total_count":1,"children":[]},{"name":".CreatePanel()","total_count":1,"children":[]},{"name":".CreatePanelComponent()","total_count":1,"children":[]},{"name":".CreateReferenceRange()","total_count":1,"children":[]},{"name":".CreateTestCatalog()","total_count":1,"children":[]},{"name":".CreateTestParameter()","total_count":1,"children":[]},{"name":".GetDepartments()","total_count":1,"children":[]},{"name":".GetPanelComponentsByPanelID()","total_count":1,"children":[]},{"name":".GetPanelsByDepartmentID()","total_count":1,"children":[]},{"name":".GetReferenceRangesByTestParameterID()","total_count":1,"children":[]},{"name":".GetTestCatalogByDepartmentID()","total_count":1,"children":[]},{"name":".GetTestParametersByTestCatalogID()","total_count":1,"children":[]},{"name":".UpdateDepartment()","total_count":1,"children":[]},{"name":".UpdatePanel()","total_count":1,"children":[]},{"name":".UpdateReferenceRange()","total_count":1,"children":[]},{"name":".UpdateTestCatalog()","total_count":1,"children":[]},{"name":".UpdateTestParameter()","total_count":1,"children":[]},{"name":"LabTestsService","total_count":1,"children":[]},{"name":"NewLabTestsService()","total_count":1,"children":[]}]},{"name":"orderItem.go","total_count":6,"children":[{"name":".CreateOrder()","total_count":1,"children":[]},{"name":".GetOrderByID()","total_count":1,"children":[]},{"name":".GetOrdersByVisitID()","total_count":1,"children":[]},{"name":".UpdateOrder()","total_count":1,"children":[]},{"name":"NewOrderService()","total_count":1,"children":[]},{"name":"OrderService","total_count":1,"children":[]}]},{"name":"patient.go","total_count":6,"children":[{"name":".CreatePatient()","total_count":1,"children":[]},{"name":".GetPatientByID()","total_count":1,"children":[]},{"name":".GetPatients()","total_count":1,"children":[]},{"name":".UpdatePatient()","total_count":1,"children":[]},{"name":"NewPatientService()","total_count":1,"children":[]},{"name":"PatientService","total_count":1,"children":[]}]},{"name":"profile.go","total_count":6,"children":[{"name":".CreateProfile()","total_count":1,"children":[]},{"name":".GetProfileByID()","total_count":1,"children":[]},{"name":".GetProfiles()","total_count":1,"children":[]},{"name":".UpdateProfileByUserID()","total_count":1,"children":[]},{"name":"NewProfileService()","total_count":1,"children":[]},{"name":"ProfileService","total_count":1,"children":[]}]},{"name":"report.go","total_count":8,"children":[{"name":".CreateReport()","total_count":1,"children":[]},{"name":".CreateReportPrint()","total_count":1,"children":[]},{"name":".GetReportByID()","total_count":1,"children":[]},{"name":".GetReportPrintsByReportID()","total_count":1,"children":[]},{"name":".GetReportsByVisitID()","total_count":1,"children":[]},{"name":".UpdateReport()","total_count":1,"children":[]},{"name":"NewReportService()","total_count":1,"children":[]},{"name":"ReportService","total_count":1,"children":[]}]},{"name":"result.go","total_count":7,"children":[{"name":".CreateResult()","total_count":1,"children":[]},{"name":".CreateResults()","total_count":1,"children":[]},{"name":".GetResultByID()","total_count":1,"children":[]},{"name":".GetResultsByOrderID()","total_count":1,"children":[]},{"name":".UpdateResult()","total_count":1,"children":[]},{"name":"NewResultService()","total_count":1,"children":[]},{"name":"ResultService","total_count":1,"children":[]}]},{"name":"role.go","total_count":5,"children":[{"name":".CreateRole()","total_count":1,"children":[]},{"name":".GetRoleIDByRoleName()","total_count":1,"children":[]},{"name":".GetRoleNameByRoleID()","total_count":1,"children":[]},{"name":"NewRoleService()","total_count":1,"children":[]},{"name":"RoleService","total_count":1,"children":[]}]},{"name":"users.go","total_count":4,"children":[{"name":".CreateUser()","total_count":1,"children":[]},{"name":".GetUserByEmail()","total_count":1,"children":[]},{"name":"NewUserService()","total_count":1,"children":[]},{"name":"UserService","total_count":1,"children":[]}]},{"name":"visit.go","total_count":6,"children":[{"name":".CreateVisit()","total_count":1,"children":[]},{"name":".GetVisitByID()","total_count":1,"children":[]},{"name":".GetVisitByPatientID()","total_count":1,"children":[]},{"name":".UpdateVisitByID()","total_count":1,"children":[]},{"name":"NewVisitService()","total_count":1,"children":[]},{"name":"VisitService","total_count":1,"children":[]}]}]}]}]}]};
+
+    function transformData(jsonData) {
+        // Helper function to recursively build the children structure
+        function processNode(node, parentL1StageName) {
+            let displayName = node.name;
+            // Append total_count if it exists and is not already in the name
+            if (node.total_count !== undefined) {
+                if (!/\(Total Count: \d+\)$/.test(displayName)) {
+                    displayName += ` (Total Count: ${node.total_count})`;
+                }
+            }
+
+            const newNode = { name: displayName };
+
+            if (parentL1StageName === "Root") {
+                 newNode.originalStageName = node.name;
+            } else {
+                newNode.originalStageName = parentL1StageName;
+            }
+
+            if (node.children && node.children.length > 0) {
+                const stageNameToPass = (parentL1StageName === "Root") ? node.name : parentL1StageName;
+                newNode.children = node.children.map(child => processNode(child, stageNameToPass));
+            }
+
+            return newNode;
+        }
+
+        let rootDisplayName = jsonData.name;
+        if (jsonData.total_count !== undefined && !/\(Total Count: \d+\)$/.test(rootDisplayName)) {
+            rootDisplayName += ` (Total Count: ${jsonData.total_count})`;
+        }
+
+        return {
+            name: rootDisplayName,
+            originalStageName: "Root",
+            children: (jsonData.children || []).map(child => processNode(child, "Root"))
+        };
+    }
+
+    const treeData = transformData(initialJsonData);
+
+    // Auto-populated phaseColors: every depth-1 child of the root gets
+    // a stable colour from a bigger palette so all top-level dirs are
+    // distinguishable.
+    const PALETTE = [
+      ["#3498DB","#2980B9","#AED6F1"], ["#2ECC71","#27AE60","#A9DFBF"],
+      ["#E74C3C","#C0392B","#F5B7B1"], ["#9B59B6","#8E44AD","#D7BDE2"],
+      ["#F39C12","#D68910","#FAD7A0"], ["#1ABC9C","#117864","#A2D9CE"],
+      ["#34495E","#1B2631","#ABB2B9"], ["#E67E22","#BA4A00","#F5CBA7"],
+      ["#16A085","#0E6655","#A2D9CE"], ["#D35400","#A04000","#EDBB99"],
+      ["#7F8C8D","#566573","#D5DBDB"], ["#C0392B","#7B241C","#F5B7B1"],
+      ["#2E86C1","#1B4F72","#A9CCE3"], ["#28B463","#196F3D","#A9DFBF"],
+      ["#AF7AC5","#6C3483","#D2B4DE"],
+    ];
+    const phaseColors = { "Root": { fill: "#4A4A4A", stroke: "#333333", collapsedFill: "#6C757D" },
+                          "Default": { fill: "#BDC3C7", stroke: "#95A5A6", collapsedFill: "#ECF0F1" } };
+    (initialJsonData.children || []).forEach((c, i) => {
+      const pal = PALETTE[i % PALETTE.length];
+      phaseColors[c.name] = { fill: pal[0], stroke: pal[1], collapsedFill: pal[2] };
+    });
+
+    const levelSpecificPalettes = {
+      0: { fill: "#4A4A4A", stroke: "#333333", collapsedFill: "#6C757D" },
+      2: { fill: "#6ab04c", stroke: "#508a38", collapsedFill: "#a3d391" },
+      3: { fill: "#f0932b", stroke: "#d0730f", collapsedFill: "#f6c07e" },
+      4: { fill: "#be2edd", stroke: "#a01cb3", collapsedFill: "#e08bf2" },
+      5: { fill: "#00a8ff", stroke: "#007ac1", collapsedFill: "#74d2ff" },
+      6: { fill: "#e55039", stroke: "#c23620", collapsedFill: "#f09a8d" },
+      default: { fill: "#747d8c", stroke: "#57606f", collapsedFill: "#a4b0be" }
+    };
+
+    const svgElement = d3.select("#tree-svg");
+    const initialSvgWidth = +svgElement.attr("width");
+    const initialSvgHeight = +svgElement.attr("height");
+    const margin = { top: 40, right: 120, bottom: 80, left: 450 };
+    let width = initialSvgWidth - margin.left - margin.right;
+    let height = initialSvgHeight - margin.top - margin.bottom;
+    const duration = 500;
+    let nodeCounter = 0;
+    const g = svgElement.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
+    const treemap = d3.tree().nodeSize([40, 0]);
+    let rootNode = d3.hierarchy(treeData, d => d.children);
+    rootNode.x0 = 0;
+    rootNode.y0 = 0;
+
+    if (rootNode.children) {
+      rootNode.children.forEach(d_child => {
+        if (d_child.children) { collapseBranch(d_child); }
+      });
+    }
+    updateTree(rootNode);
+
+    function collapseBranch(d) { if (d.children) { d._children = d.children; d._children.forEach(collapseBranch); d.children = null; } }
+    function expandBranch(d) { if (d._children) { d.children = d._children; d._children = null; } if (d.children) { d.children.forEach(expandBranch); } }
+    window.expandAll = () => { expandBranch(rootNode); updateTree(rootNode); };
+    window.collapseAll = () => { if (rootNode.children) { rootNode.children.forEach(collapseBranch); } updateTree(rootNode); };
+    window.resetView = () => { if (rootNode.children) { rootNode.children.forEach(d_child => { if (d_child.children || d_child._children) { collapseBranch(d_child); } }); } if (rootNode._children && !rootNode.children) { rootNode.children = rootNode._children; rootNode._children = null; } updateTree(rootNode); };
+
+    function updateTree(source) {
+      const treeLayoutData = treemap(rootNode);
+      let nodes = treeLayoutData.descendants();
+      let links = treeLayoutData.descendants().slice(1);
+
+      let minX = 0;
+      let maxX = 0;
+      if (nodes.length > 0) {
+        minX = d3.min(nodes, d => d.x);
+        maxX = d3.max(nodes, d => d.x);
+      }
+
+      let neededHeight = Math.max(initialSvgHeight, maxX - minX + margin.top + margin.bottom + 100);
+      svgElement.transition().duration(duration / 2).attr("height", neededHeight);
+      g.transition().duration(duration / 2).attr("transform", `translate(${margin.left},${margin.top - minX + 40})`);
+
+      nodes.forEach(d => { d.y = d.depth * 400; }); // Adjust horizontal separation if needed
+
+      const node = g.selectAll('g.node').data(nodes, d => d.id || (d.id = ++nodeCounter));
+      const nodeEnter = node.enter().append('g')
+        .attr('class', d => "node" + (d.children || d._children ? " node--internal" : " node--leaf") + (d._children ? " _children" : ""))
+        .attr('transform', d => `translate(${source.y0},${source.x0})`)
+        .on('click', (event, d) => { if (d.children) { d._children = d.children; d.children = null; } else if (d._children) { d.children = d._children; d._children = null; } updateTree(d); })
+        .style('cursor', d => (d.children || d._children) ? 'pointer' : 'default');
+
+      nodeEnter.append('circle').attr('r', 1e-6);
+
+      nodeEnter.append('text')
+        .attr('dy', '.35em')
+        .attr('x', d => d.children || d._children ? -14 : 14)
+        .attr('text-anchor', d => d.children || d._children ? 'end' : 'start')
+        .style("fill-opacity", 1e-6)
+        .call(wrapText, 380);
+
+      const nodeUpdate = nodeEnter.merge(node);
+      nodeUpdate.transition().duration(duration)
+        .attr('transform', d => `translate(${d.y},${d.x})`)
+        .attr('class', d => "node" + (d.children ? " node--internal" : " node--leaf") + (d._children ? " node--internal _children" : ""));
+
+      nodeUpdate.select('circle').attr('r', 8.5)
+        .style('fill', d => {
+            let palette;
+            if (d.depth === 0) {
+                palette = levelSpecificPalettes[0];
+            } else if (d.depth === 1) {
+                palette = phaseColors[d.data.originalStageName] || phaseColors.Default;
+            } else {
+                palette = levelSpecificPalettes[d.depth] || levelSpecificPalettes.default;
+            }
+            if (d._children) return palette.collapsedFill;
+            if (d.children) return palette.fill;
+            return "#fff";
+        })
+        .style('stroke', d => {
+            let palette;
+            if (d.depth === 0) {
+                palette = levelSpecificPalettes[0];
+            } else if (d.depth === 1) {
+                palette = phaseColors[d.data.originalStageName] || phaseColors.Default;
+            } else {
+                palette = levelSpecificPalettes[d.depth] || levelSpecificPalettes.default;
+            }
+            return palette.stroke;
+        });
+      nodeUpdate.select('text').style("fill-opacity", 1).call(wrapText, 380);
+
+      const nodeExit = node.exit().transition().duration(duration).attr('transform', d => `translate(${source.y},${source.x})`).remove();
+      nodeExit.select('circle').attr('r', 1e-6);
+      nodeExit.select('text').style('fill-opacity', 1e-6);
+
+      const link = g.selectAll('path.link').data(links, d => d.id);
+      const linkEnter = link.enter().insert('path', "g").attr('class', 'link').attr('d', d => { const o = { x: source.x0, y: source.y0 }; return diagonal(o, o); });
+
+      linkEnter.merge(link).transition().duration(duration).attr('d', d => diagonal(d, d.parent))
+        .style('stroke', d => {
+            const sourceNode = d.parent;
+            if (!sourceNode) return phaseColors.Default.stroke;
+            const l1AncestorName = sourceNode.data.originalStageName;
+            const colorPalette = phaseColors[l1AncestorName] || phaseColors.Default;
+            return colorPalette.stroke;
+        });
+      link.exit().transition().duration(duration).attr('d', d => { const o = { x: source.x, y: source.y }; return diagonal(o, o); }).remove();
+      nodes.forEach(d => { d.x0 = d.x; d.y0 = d.y; });
+    }
+
+    function diagonal(s, d) { return `M ${s.y} ${s.x} C ${(s.y + d.y) / 2} ${s.x}, ${(s.y + d.y) / 2} ${d.x}, ${d.y} ${d.x}`; }
+
+    function wrapText(textElements, maxWidth) {
+        const textPartColors = {
+            name: '#343a40',
+            count: '#0056b3'
+        };
+        const countRegex = /(\s\(Total Count: \d+\))$/;
+
+        textElements.each(function () {
+            const textD3 = d3.select(this);
+            const originalNodeText = textD3.datum().data.name;
+            const x = parseFloat(textD3.attr("x") || 0);
+            const initialDy = textD3.attr("dy");
+            const textAnchor = textD3.attr("text-anchor");
+            const lineHeight = 1.1;
+
+            textD3.text(null);
+
+            let namePart = originalNodeText;
+            let countPartText = "";
+
+            const countMatch = originalNodeText.match(countRegex);
+            if (countMatch && originalNodeText.endsWith(countMatch[0])) {
+                namePart = originalNodeText.substring(0, originalNodeText.length - countMatch[0].length).trim();
+                countPartText = countMatch[0].trim();
+            }
+
+            const tokens = [];
+            namePart.split(/\s+/).filter(Boolean).forEach(word => {
+                tokens.push({ text: word, type: 'name' });
+            });
+            if (countPartText) {
+                tokens.push({ text: countPartText, type: 'count' });
+            }
+
+            if (tokens.length === 0 && originalNodeText) {
+                tokens.push({ text: originalNodeText, type: 'name' });
+            }
+
+            let currentTspan = textD3.append("tspan").attr("x", x).attr("dy", initialDy);
+            if (textAnchor === "end") currentTspan.attr("text-anchor", "end");
+
+            let lineTokens = [];
+
+            for (let i = 0; i < tokens.length; i++) {
+                const tokenObj = tokens[i];
+
+                lineTokens.push(tokenObj);
+                currentTspan.text(lineTokens.map(t => t.text).join(" "));
+
+                if (currentTspan.node().getComputedTextLength() > maxWidth && lineTokens.length > 1) {
+                    lineTokens.pop();
+
+                    currentTspan.text(null);
+                    lineTokens.forEach((prevToken, idx) => {
+                        currentTspan.append("tspan")
+                            .text((idx > 0 ? " " : "") + prevToken.text)
+                            .style("fill", textPartColors[prevToken.type] || textPartColors.name)
+                            .style("font-weight", prevToken.type === 'count' ? "bold" : "normal");
+                    });
+
+                    lineTokens = [tokenObj];
+                    currentTspan = textD3.append("tspan").attr("x", x).attr("dy", lineHeight + "em");
+                    if (textAnchor === "end") currentTspan.attr("text-anchor", "end");
+                }
+            }
+
+            currentTspan.text(null);
+            lineTokens.forEach((token, idx) => {
+                currentTspan.append("tspan")
+                    .text((idx > 0 ? " " : "") + token.text)
+                    .style("fill", textPartColors[token.type] || textPartColors.name)
+                    .style("font-weight", token.type === 'count' ? "bold" : "normal");
+            });
+
+            if (textD3.selectAll("tspan > tspan").empty() && textD3.select("tspan").text().length === 0 && originalNodeText) {
+                let t = textD3.select("tspan");
+                let displayText = originalNodeText;
+                t.text(displayText).style("fill", textPartColors.name);
+                if (t.node() && t.node().getComputedTextLength() > maxWidth && displayText.length > 20) {
+                    let estimatedChars = Math.floor(maxWidth / (t.node().getComputedTextLength()/displayText.length) );
+                    displayText = displayText.substring(0, Math.max(0, estimatedChars - 3)) + "...";
+                    t.text(displayText);
+                }
+            }
+        });
+    }
+  </script>
+</body>
+</html>
