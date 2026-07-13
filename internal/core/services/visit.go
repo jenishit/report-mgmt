@@ -22,6 +22,14 @@ func (v *VisitService) CreateVisit(ctx context.Context, visit *domain.Visit) (*d
 	return v.repo.CreateVisit(ctx, visit)
 }
 
-func (v *VisitService) GetVisitByID(ctx context.Context, id uuid.UUID) ([]*domain.ListVisit, error) {
+func (v *VisitService) GetVisitByID(ctx context.Context, id uuid.UUID) (*domain.ListVisit, error) {
 	return v.repo.GetVisitByID(ctx, id)
+}
+
+func (v *VisitService) GetVisitByPatientID(ctx context.Context, id uuid.UUID) ([]*domain.ListVisit, error) {
+	return v.repo.GetVisitByPatientID(ctx, id)
+}
+
+func (vs *VisitService) UpdateVisitByID(ctx context.Context, v *domain.Visit) error {
+	return vs.repo.UpdateVisitByID(ctx, v)
 }

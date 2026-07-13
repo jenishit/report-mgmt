@@ -10,8 +10,17 @@ import (
 type CreateVisit struct {
 	VisitNo   string     `json:"visit_no" binding:"required"`
 	PatientID uuid.UUID  `json:"patient_id" binding:"required"`
-	DoctorID  *uuid.UUID `json:"doctor_id"`
+	DoctorID  uuid.UUID `json:"doctor_id"`
 	Status    string     `json:"status"`
+}
+
+type VisitRequest struct {
+	ID        uuid.UUID `json:"id"`
+	VisitNo   string    `json:"visit_no" binding:"required"`
+	PatientID uuid.UUID `json:"patient_id" binding:"required"`
+	DoctorID  uuid.UUID `json:"doctor_id"`
+	Status    string    `json:"status"`
+	IsDeleted bool      `json:"is_deleted"`
 }
 
 type ListVisits struct {

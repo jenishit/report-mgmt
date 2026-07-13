@@ -19,12 +19,13 @@ type Visit struct {
 	ID           uuid.UUID
 	VisitNo      string
 	PatientID    uuid.UUID
-	DoctorID     *uuid.UUID
+	DoctorID     uuid.UUID
 	RegisteredBy uuid.UUID
 	VisitDate    time.Time
 	Status       Status
 	CreatedAt    time.Time
 	IsDeleted    bool
+	UpdatedAt    time.Time
 }
 
 type ListVisit struct {

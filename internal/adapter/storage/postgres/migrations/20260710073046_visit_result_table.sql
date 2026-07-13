@@ -1,7 +1,7 @@
 -- +goose Up
 CREATE TABLE visits (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    visit_no VARCHAR(100),
+    visit_no VARCHAR(100) UNIQUE,
     patient_id UUID NOT NULL REFERENCES patients(id),
     doctor_id UUID REFERENCES doctors(id),
     registered_by UUID NOT NULL REFERENCES users(id),
@@ -9,7 +9,8 @@ CREATE TABLE visits (
     v_status VARCHAR(100) NOT NULL DEFAULT 'in_progress'
                      CHECK (v_status IN ('registered','in_progress','completed', 'cancelled')),
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-    is_deleted BOOLEAN NOT NULL DEFAULT FALSE
+    is_deleted BOOLEAN NOT NULL DEFAULT FALSE,
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE order_item (
@@ -20,7 +21,8 @@ CREATE TABLE order_item (
     status VARCHAR(100) NOT NULL DEFAULT 'collected' CHECK (status IN ('completed','collected','result_entered')),
     price NUMERIC(10,2),
     collected_by UUID NOT NULL REFERENCES users(id),
-    collected_at TIMESTAMP NOT NULL DEFAULT NOW()
+    collected_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 CREATE TABLE result (
@@ -32,7 +34,8 @@ CREATE TABLE result (
     performed_by UUID NOT NULL REFERENCES users(id),
     performed_at TIMESTAMP NOT NULL DEFAULT NOW(),
     verified_by UUID NOT NULL REFERENCES users(id),
-    remarks VARCHAR(100)
+    remarks VARCHAR(100),
+    updated_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 -- +goose Down
