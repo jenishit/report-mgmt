@@ -79,6 +79,14 @@ func main() {
 	orderService := services.NewOrderService(orderRepo)
 	orderHandler := http.NewOrderHandler(orderService)
 
+	resultRepo := repository.NewResultRepository(db)
+	resultService := services.NewResultService(resultRepo)
+	resultHandler := http.NewResultHandler(resultService)
+
+	reportRepo := repository.NewReportRepository(db)
+	reportService := services.NewReportService(reportRepo)
+	reportHandler := http.NewReportHandler(reportService)
+
 	router, err := http.NewRouter(
 		config,
 		tokenService,
@@ -92,6 +100,8 @@ func main() {
 		*ptHandler,
 		*visitHandler,
 		*orderHandler,
+		*resultHandler,
+		*reportHandler,
 	)
 
 	if err != nil {
