@@ -196,6 +196,7 @@ func (pr *PatientRepository) UpdatePatient(ctx context.Context, pt *domain.Patie
 		builder = builder.Set("mrn", pt.MRN)
 	}
 
+
 	if !pt.DOB.IsZero() {
 		builder = builder.Set("dob", pt.DOB)
 	}

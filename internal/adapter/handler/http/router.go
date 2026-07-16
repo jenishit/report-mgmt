@@ -2,6 +2,10 @@ package http
 
 import (
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
+	_ "github.com/jenish-brainztechs/go-backend/docs"
 	"github.com/jenish-brainztechs/go-backend/internal/adapter/config"
 	"github.com/jenish-brainztechs/go-backend/internal/core/port"
 )
@@ -43,6 +47,8 @@ func NewRouter(
 
 	router.Use(gin.Recovery())
 
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	api := router.Group("/api")
 
 	auth := api.Group("/auth")
@@ -55,9 +61,9 @@ func NewRouter(
 		role.POST("/create", roleHandler.CreateRole)
 	}
 
-	user := api.Group("/user")
+	spc := api.Group("/special")
 	{
-		user.POST("/create", userHandler.CreateUser)
+		spc.POST("/user/create", userHandler.CreateUser)
 	}
 
 	profile := api.Group("/profile").Use(authMiddleware(token))
@@ -68,6 +74,11 @@ func NewRouter(
 
 	admin := api.Group("/admin")
 	admin.Use(authMiddleware(token), adminMiddleware())
+
+	user := admin.Group("/user")
+	{
+		user.POST("/create", userHandler.CreateUser)
+	}
 
 	profiles := admin.Group("/profile").Use(authMiddleware(token))
 	{

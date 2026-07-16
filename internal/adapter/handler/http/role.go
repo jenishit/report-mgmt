@@ -17,6 +17,17 @@ func NewRoleHandler(rsvc port.RoleService) *RoleHandler {
 	}
 }
 
+// CreateRole creates a new role
+// @Summary Create role
+// @Description Create a new user role
+// @Tags Roles
+// @Accept json
+// @Produce json
+// @Param request body dto.CreateRole true "Role details"
+// @Success 200 {object} response{data=domain.Role}
+// @Failure 400 {object} errorResponse
+// @Failure 409 {object} errorResponse
+// @Router /role/create [post]
 func (rh *RoleHandler) CreateRole(ctx *gin.Context) {
 	var req dto.CreateRole
 

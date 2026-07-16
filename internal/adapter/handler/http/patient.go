@@ -1,7 +1,6 @@
 package http
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -22,6 +21,18 @@ func NewPatientHandler(svc port.PatientService) *PatientHandler {
 	}
 }
 
+// CreatePatient creates a new patient
+// @Summary Create patient
+// @Description Create a new patient record
+// @Tags Patients
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body dto.CreatePatient true "Patient details"
+// @Success 200 {object} response{data=domain.Patient}
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Router /patient [post]
 func (ph *PatientHandler) CreatePatient(ctx *gin.Context) {
 	var req dto.CreatePatient
 
@@ -29,10 +40,8 @@ func (ph *PatientHandler) CreatePatient(ctx *gin.Context) {
 		validationError(ctx, err)
 		return
 	}
-	fmt.Println("heree")
-	dob, err := time.Parse("2006-01-02", req.DOB)
 
-	fmt.Println(dob)
+	dob, err := time.Parse("2006-01-02", req.DOB)
 
 	if err != nil {
 		handleError(ctx, err)
@@ -60,6 +69,19 @@ func (ph *PatientHandler) CreatePatient(ctx *gin.Context) {
 	handleSuccess(ctx, d)
 }
 
+// GetPatientByID returns a patient by ID
+// @Summary Get patient by ID
+// @Description Get a patient's details by ID
+// @Tags Patients
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Patient ID"
+// @Success 200 {object} response{data=dto.PatientResponse}
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Router /patient/{id} [get]
 func (ph *PatientHandler) GetPatientByID(ctx *gin.Context) {
 	id := ctx.Param("id")
 
@@ -79,6 +101,16 @@ func (ph *PatientHandler) GetPatientByID(ctx *gin.Context) {
 	handleSuccess(ctx, pt)
 }
 
+// GetPatients returns all patients
+// @Summary List patients
+// @Description Get all patients
+// @Tags Patients
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} response{data=[]dto.PatientResponse}
+// @Failure 401 {object} errorResponse
+// @Router /patient [get]
 func (ph *PatientHandler) GetPatients(ctx *gin.Context) {
 	res, err := ph.svc.GetPatients(ctx)
 
@@ -92,6 +124,20 @@ func (ph *PatientHandler) GetPatients(ctx *gin.Context) {
 	handleSuccess(ctx, rsp)
 }
 
+// UpdatePatient updates a patient
+// @Summary Update patient
+// @Description Update an existing patient record
+// @Tags Patients
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Patient ID"
+// @Param request body dto.CreatePatient true "Patient details"
+// @Success 200 {object} response
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Router /patient/{id} [patch]
 func (ph *PatientHandler) UpdatePatient(ctx *gin.Context) {
 	ID := ctx.Param("id")
 	ptID, err := uuid.Parse(ID)

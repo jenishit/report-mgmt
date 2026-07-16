@@ -19,6 +19,18 @@ func NewLabHandler(svc port.LabService) *LabHandler {
 	}
 }
 
+// InsertLab creates a new lab settings entry
+// @Summary Create lab settings
+// @Description Create new lab settings (admin only)
+// @Tags Lab Settings
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body dto.LabRequest true "Lab settings details"
+// @Success 200 {object} response{data=domain.LabSettings}
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Router /admin/lab [post]
 func (sh *LabHandler) InsertLab(ctx *gin.Context) {
 	var req dto.LabRequest
 
@@ -59,6 +71,19 @@ func (sh *LabHandler) InsertLab(ctx *gin.Context) {
 	handleSuccess(ctx, s)
 }
 
+// GetLabByID returns lab settings by ID
+// @Summary Get lab settings
+// @Description Get lab settings by ID
+// @Tags Lab Settings
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Lab ID"
+// @Success 200 {object} response{data=domain.LabSettings}
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Router /lab/get/{id} [get]
 func (sh *LabHandler) GetLabByID(ctx *gin.Context) {
 	labID := ctx.Param("id")
 	labUUID, err := uuid.Parse(labID)
@@ -76,6 +101,20 @@ func (sh *LabHandler) GetLabByID(ctx *gin.Context) {
 	handleSuccess(ctx, lab)
 }
 
+// UpdateLab updates lab settings
+// @Summary Update lab settings
+// @Description Update lab settings by ID (admin only)
+// @Tags Lab Settings
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Lab ID"
+// @Param request body dto.LabRequest true "Lab settings details"
+// @Success 200 {object} response
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Router /admin/lab/{id} [patch]
 func (sh *LabHandler) UpdateLab(ctx *gin.Context) {
 	labID := ctx.Param("id")
 	labUUID, err := uuid.Parse(labID)
@@ -122,6 +161,16 @@ func (sh *LabHandler) UpdateLab(ctx *gin.Context) {
 	handleSuccess(ctx, gin.H{"message": "Lab settings updated successfully"})
 }
 
+// GetAllLabs returns all lab settings
+// @Summary List all lab settings
+// @Description Get all lab settings (admin only)
+// @Tags Lab Settings
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} response{data=[]dto.LabResponse}
+// @Failure 401 {object} errorResponse
+// @Router /admin/lab [get]
 func (sh *LabHandler) GetAllLabs(ctx *gin.Context) {
 	
 	res, err := sh.svc.GetAllLabs(ctx)

@@ -18,6 +18,18 @@ func NewDoctorHandler(svc port.DoctorService) *DoctorHandler {
 	}
 }
 
+// CreateDoctor creates a new doctor
+// @Summary Create doctor
+// @Description Create a new doctor record (admin only)
+// @Tags Doctors
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body dto.CreateDoctor true "Doctor details"
+// @Success 200 {object} response{data=domain.Doctor}
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Router /admin/doctor [post]
 func (dh *DoctorHandler) CreateDoctor(ctx *gin.Context) {
 	var req dto.CreateDoctor
 
@@ -45,6 +57,19 @@ func (dh *DoctorHandler) CreateDoctor(ctx *gin.Context) {
 	handleSuccess(ctx, d)
 }
 
+// GetDoctorByID returns a doctor by ID
+// @Summary Get doctor by ID
+// @Description Get a doctor's details by ID
+// @Tags Doctors
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Doctor ID"
+// @Success 200 {object} response{data=domain.Doctor}
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Router /doctor/{id} [get]
 func (dh *DoctorHandler) GetDoctorByID(ctx *gin.Context) {
 	id := ctx.Param("id")
 
@@ -64,6 +89,16 @@ func (dh *DoctorHandler) GetDoctorByID(ctx *gin.Context) {
 	handleSuccess(ctx, doc)
 }
 
+// GetDoctors returns all doctors
+// @Summary List doctors
+// @Description Get all doctors
+// @Tags Doctors
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} response{data=[]dto.DoctorResponse}
+// @Failure 401 {object} errorResponse
+// @Router /doctor [get]
 func (dh *DoctorHandler) GetDoctors(ctx *gin.Context) {
 	res, err := dh.svc.GetDoctors(ctx)
 
@@ -77,6 +112,20 @@ func (dh *DoctorHandler) GetDoctors(ctx *gin.Context) {
 	handleSuccess(ctx, rsp)
 }
 
+// UpdateDoctor updates a doctor
+// @Summary Update doctor
+// @Description Update an existing doctor record (admin only)
+// @Tags Doctors
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Doctor ID"
+// @Param request body dto.CreateDoctor true "Doctor details"
+// @Success 200 {object} response
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Router /admin/doctor/{id} [patch]
 func (dh *DoctorHandler) UpdateDoctor(ctx *gin.Context) {
 	ID := ctx.Param("id")
 	docID, err := uuid.Parse(ID)

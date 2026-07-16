@@ -17,6 +17,17 @@ func NewProfileHandler(psvc port.ProfileService) *ProfileHandler {
 	}
 }
 
+// GetProfileByID returns the profile of the authenticated user
+// @Summary Get my profile
+// @Description Get the profile of the currently authenticated user
+// @Tags Profile
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} response{data=dto.ProfileResponse}
+// @Failure 401 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Router /profile/getme [get]
 func (ph *ProfileHandler) GetProfileByID(ctx *gin.Context) {
 	payload, exists := ctx.Get(authorizationPayloadKey)
 	if !exists {
@@ -40,6 +51,17 @@ func (ph *ProfileHandler) GetProfileByID(ctx *gin.Context) {
 	handleSuccess(ctx, rsp)
 }
 
+// GetProfiles returns all profiles (admin only)
+// @Summary List all profiles
+// @Description Get all user profiles (admin only)
+// @Tags Profile
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} response{data=[]dto.ProfileResponse}
+// @Failure 401 {object} errorResponse
+// @Failure 403 {object} errorResponse
+// @Router /admin/profile/profile-details [get]
 func (ph *ProfileHandler) GetProfiles(ctx *gin.Context) {
 	res, err := ph.psvc.GetProfiles(ctx)
 	if err != nil {
@@ -51,6 +73,19 @@ func (ph *ProfileHandler) GetProfiles(ctx *gin.Context) {
 	handleSuccess(ctx, rsp)
 }
 
+// UpdateProfileByUserID updates the profile of the authenticated user
+// @Summary Update profile
+// @Description Update the profile of the currently authenticated user
+// @Tags Profile
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "User ID"
+// @Param request body dto.UpdateProfileRequest true "Profile details"
+// @Success 200 {object} response
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Router /profile/update-profile/{id} [patch]
 func (ph *ProfileHandler) UpdateProfileByUserID(ctx *gin.Context) {
 	payload, exists := ctx.Get(authorizationPayloadKey)
 	if !exists {
