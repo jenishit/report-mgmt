@@ -16,6 +16,17 @@ func NewUsersHandler(usvc port.UserService) *UserHandler {
 	}
 }
 
+// CreateUser creates a new user
+// @Summary Create user
+// @Description Create a new user with role and profile
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param request body dto.CreateUser true "User details"
+// @Success 200 {object} response
+// @Failure 400 {object} errorResponse
+// @Failure 409 {object} errorResponse
+// @Router /user/create [post]
 func (uh *UserHandler) CreateUser(ctx *gin.Context) {
 	var req dto.CreateUser
 

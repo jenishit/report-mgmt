@@ -18,6 +18,18 @@ func NewVisitHandler(svc port.VisitService) *VisitHandler {
 	}
 }
 
+// CreateVisit creates a new visit
+// @Summary Create visit
+// @Description Create a new patient visit
+// @Tags Visits
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body dto.CreateVisit true "Visit details"
+// @Success 200 {object} response{data=domain.Visit}
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Router /visit [post]
 func (vh *VisitHandler) CreateVisit(ctx *gin.Context) {
 	var req dto.CreateVisit
 
@@ -56,6 +68,19 @@ func (vh *VisitHandler) CreateVisit(ctx *gin.Context) {
 	handleSuccess(ctx, vis)
 }
 
+// GetVisitByID returns a visit by ID
+// @Summary Get visit by ID
+// @Description Get a visit's details by ID
+// @Tags Visits
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Visit ID"
+// @Success 200 {object} response{data=dto.ListVisits}
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Router /visit/{id} [get]
 func (vh *VisitHandler) GetVisitByID(ctx *gin.Context) {
 	id := ctx.Param("id")
 
@@ -76,6 +101,18 @@ func (vh *VisitHandler) GetVisitByID(ctx *gin.Context) {
 	handleSuccess(ctx, res)
 }
 
+// GetVisitByPatientID returns visits for a patient
+// @Summary List visits by patient
+// @Description Get all visits for a given patient
+// @Tags Visits
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Patient ID"
+// @Success 200 {object} response{data=[]dto.ListVisits}
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Router /visit/patient/{id} [get]
 func (vh *VisitHandler) GetVisitByPatientID(ctx *gin.Context) {
 	id := ctx.Param("id")
 
@@ -98,6 +135,20 @@ func (vh *VisitHandler) GetVisitByPatientID(ctx *gin.Context) {
 	handleSuccess(ctx, rsp)
 }
 
+// UpdateVisitByID updates a visit
+// @Summary Update visit
+// @Description Update an existing visit
+// @Tags Visits
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Visit ID"
+// @Param request body dto.VisitRequest true "Visit details"
+// @Success 200 {object} response
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Router /visit/{id} [patch]
 func (vh *VisitHandler) UpdateVisitByID(ctx *gin.Context) {
 	ID := ctx.Param("id")
 	vID, err := uuid.Parse(ID)

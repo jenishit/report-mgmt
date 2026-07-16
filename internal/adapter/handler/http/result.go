@@ -16,6 +16,18 @@ func NewResultHandler(svc port.ResultService) *ResultHandler {
 	return &ResultHandler{svc: svc}
 }
 
+// CreateResult creates batch results for an order
+// @Summary Create results
+// @Description Create batch test results for an order
+// @Tags Results
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body dto.BatchCreateResultRequest true "Batch result details"
+// @Success 200 {object} response{data=[]dto.ResultResponse}
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Router /result [post]
 func (h *ResultHandler) CreateResult(ctx *gin.Context) {
 	var req dto.BatchCreateResultRequest
 
@@ -63,6 +75,19 @@ func (h *ResultHandler) CreateResult(ctx *gin.Context) {
 	handleSuccess(ctx, dto.ResultsResponseFromDomain(res))
 }
 
+// GetResultByID returns a result by ID
+// @Summary Get result by ID
+// @Description Get a result's details by ID
+// @Tags Results
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Result ID"
+// @Success 200 {object} response{data=dto.ResultResponse}
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Router /result/{id} [get]
 func (h *ResultHandler) GetResultByID(ctx *gin.Context) {
 	id := ctx.Param("id")
 
@@ -81,6 +106,18 @@ func (h *ResultHandler) GetResultByID(ctx *gin.Context) {
 	handleSuccess(ctx, dto.ResultResponseFromDomain(res))
 }
 
+// GetResultsByOrderID returns results for an order
+// @Summary List results by order
+// @Description Get all results for a given order
+// @Tags Results
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param order_id path string true "Order ID"
+// @Success 200 {object} response{data=[]dto.ResultResponse}
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Router /result/order/{order_id} [get]
 func (h *ResultHandler) GetResultsByOrderID(ctx *gin.Context) {
 	id := ctx.Param("order_id")
 
@@ -99,6 +136,20 @@ func (h *ResultHandler) GetResultsByOrderID(ctx *gin.Context) {
 	handleSuccess(ctx, dto.ResultsResponseFromDomain(res))
 }
 
+// UpdateResult updates a result
+// @Summary Update result
+// @Description Update an existing result
+// @Tags Results
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Result ID"
+// @Param request body dto.UpdateResultRequest true "Result details"
+// @Success 200 {object} response
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Router /result/{id} [patch]
 func (h *ResultHandler) UpdateResult(ctx *gin.Context) {
 	id := ctx.Param("id")
 

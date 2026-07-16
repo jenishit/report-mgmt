@@ -16,6 +16,18 @@ func NewOrderHandler(svc port.OrderService) *OrderHandler {
 	return &OrderHandler{svc: svc}
 }
 
+// CreateOrder creates a new order
+// @Summary Create order
+// @Description Create a new test order for a visit
+// @Tags Orders
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body dto.CreateOrderRequest true "Order details"
+// @Success 200 {object} response{data=dto.OrderResponse}
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Router /order [post]
 func (h *OrderHandler) CreateOrder(ctx *gin.Context) {
 	var req dto.CreateOrderRequest
 
@@ -54,6 +66,19 @@ func (h *OrderHandler) CreateOrder(ctx *gin.Context) {
 	handleSuccess(ctx, dto.OrderResponseFromDomain(res))
 }
 
+// GetOrderByID returns an order by ID
+// @Summary Get order by ID
+// @Description Get an order's details by ID
+// @Tags Orders
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Order ID"
+// @Success 200 {object} response{data=dto.OrderResponse}
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Router /order/{id} [get]
 func (h *OrderHandler) GetOrderByID(ctx *gin.Context) {
 	id := ctx.Param("id")
 
@@ -72,6 +97,18 @@ func (h *OrderHandler) GetOrderByID(ctx *gin.Context) {
 	handleSuccess(ctx, dto.OrderResponseFromDomain(res))
 }
 
+// GetOrdersByVisitID returns orders for a visit
+// @Summary List orders by visit
+// @Description Get all orders for a given visit
+// @Tags Orders
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param visit_id path string true "Visit ID"
+// @Success 200 {object} response{data=[]dto.OrderResponse}
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Router /order/visit/{visit_id} [get]
 func (h *OrderHandler) GetOrdersByVisitID(ctx *gin.Context) {
 	id := ctx.Param("visit_id")
 
@@ -90,6 +127,20 @@ func (h *OrderHandler) GetOrdersByVisitID(ctx *gin.Context) {
 	handleSuccess(ctx, dto.OrdersResponseFromDomain(res))
 }
 
+// UpdateOrder updates an order
+// @Summary Update order
+// @Description Update an existing order
+// @Tags Orders
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Order ID"
+// @Param request body dto.UpdateOrderRequest true "Order details"
+// @Success 200 {object} response
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Router /order/{id} [patch]
 func (h *OrderHandler) UpdateOrder(ctx *gin.Context) {
 	id := ctx.Param("id")
 

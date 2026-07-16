@@ -16,6 +16,7 @@ func NewAuthHandler(authService port.AuthService) *AuthHandler {
 	}
 }
 
+
 func (h *AuthHandler) Login(ctx *gin.Context) {
 	var req domain.Login
 	if err := ctx.ShouldBindJSON(&req); err != nil {

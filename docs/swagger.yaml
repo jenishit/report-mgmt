@@ -1,0 +1,2781 @@
+basePath: /api
+definitions:
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.BatchCreateResultRequest:
+    properties:
+      order_id:
+        type: string
+      results:
+        items:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.BatchResultItem'
+        minItems: 1
+        type: array
+      verified_by:
+        type: string
+    required:
+    - order_id
+    - results
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.BatchResultItem:
+    properties:
+      flag:
+        $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.Flag'
+      parameter_id:
+        type: string
+      remarks:
+        type: string
+      result_value:
+        type: string
+    required:
+    - parameter_id
+    - result_value
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.CreateDoctor:
+    properties:
+      email:
+        description: the acceptable string type is of email type
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      phone:
+        type: string
+      qualification:
+        type: string
+      registration_no:
+        type: string
+    required:
+    - email
+    - first_name
+    - last_name
+    - registration_no
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.CreateOrderRequest:
+    properties:
+      panel_id:
+        type: string
+      price:
+        type: number
+      status:
+        type: string
+      test_id:
+        type: string
+      visit_id:
+        type: string
+    required:
+    - test_id
+    - visit_id
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.CreatePatient:
+    properties:
+      address:
+        type: string
+      dob:
+        type: string
+      email:
+        description: the acceptable string type is of email type
+        type: string
+      first_name:
+        type: string
+      gender:
+        $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.Gender'
+      last_name:
+        type: string
+      mrn:
+        type: string
+      phone:
+        type: string
+    required:
+    - dob
+    - email
+    - first_name
+    - last_name
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.CreateReportRequest:
+    properties:
+      report_no:
+        type: string
+      visit_id:
+        type: string
+    required:
+    - report_no
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.CreateRole:
+    properties:
+      role_name:
+        type: string
+    required:
+    - role_name
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.CreateUser:
+    properties:
+      email:
+        description: the acceptable string type is of email type
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      role_name:
+        type: string
+    required:
+    - email
+    - first_name
+    - last_name
+    - password
+    - role_name
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.CreateVisit:
+    properties:
+      doctor_id:
+        type: string
+      patient_id:
+        type: string
+      status:
+        type: string
+      visit_no:
+        type: string
+    required:
+    - patient_id
+    - visit_no
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.DepartmentRequest:
+    properties:
+      dept_description:
+        type: string
+      dept_name:
+        type: string
+      id:
+        type: string
+    required:
+    - dept_name
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.DepartmentResponse:
+    properties:
+      dept_description:
+        type: string
+      dept_id:
+        type: string
+      dept_name:
+        type: string
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.DoctorResponse:
+    properties:
+      email:
+        description: the acceptable string type is of email type
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      phone:
+        type: string
+      qualification:
+        type: string
+      registration_no:
+        type: string
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.LabRequest:
+    properties:
+      address:
+        type: string
+      email:
+        type: string
+      lab_name:
+        type: string
+      phone:
+        type: string
+      registration_no:
+        type: string
+      report_footer:
+        type: string
+      tagline:
+        type: string
+    required:
+    - lab_name
+    - registration_no
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.LabResponse:
+    properties:
+      address:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      lab_name:
+        type: string
+      phone:
+        type: string
+      registration_no:
+        type: string
+      report_footer:
+        type: string
+      tagline:
+        type: string
+      updated_by:
+        type: string
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ListVisits:
+    properties:
+      doctor_name:
+        type: string
+      patient_name:
+        type: string
+      registered_by:
+        type: string
+      status:
+        type: string
+      visit_date:
+        type: string
+      visit_id:
+        type: string
+      visit_no:
+        type: string
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.OrderResponse:
+    properties:
+      collected_at:
+        type: string
+      collected_by:
+        type: string
+      id:
+        type: string
+      panel_id:
+        type: string
+      price:
+        type: number
+      status:
+        $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.OrderStatus'
+      test_id:
+        type: string
+      visit_id:
+        type: string
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.PanelComponentRequest:
+    properties:
+      panel_id:
+        type: string
+      sequence_no:
+        type: integer
+      test_id:
+        type: string
+    required:
+    - panel_id
+    - test_id
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.PanelComponentResponse:
+    properties:
+      panel_id:
+        type: string
+      sequence_no:
+        type: integer
+      test_id:
+        type: string
+    required:
+    - panel_id
+    - test_id
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.PanelRequest:
+    properties:
+      dept_id:
+        type: string
+      id:
+        type: string
+      panel_code:
+        type: string
+      panel_name:
+        type: string
+      panel_price:
+        type: number
+    required:
+    - dept_id
+    - panel_name
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.PanelResponse:
+    properties:
+      dept_id:
+        type: string
+      panel_code:
+        type: string
+      panel_id:
+        type: string
+      panel_name:
+        type: string
+      panel_price:
+        type: number
+    required:
+    - dept_id
+    - panel_name
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.PatientResponse:
+    properties:
+      address:
+        type: string
+      dob:
+        type: string
+      email:
+        description: the acceptable string type is of email type
+        type: string
+      first_name:
+        type: string
+      gender:
+        $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.Gender'
+      id:
+        type: string
+      last_name:
+        type: string
+      mrn:
+        type: string
+      phone:
+        type: string
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ProfileResponse:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: string
+      last_name:
+        type: string
+      phone:
+        type: string
+      role_name:
+        type: string
+      user_id:
+        type: string
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ReferenceRangeRequest:
+    properties:
+      gender:
+        type: string
+      id:
+        type: string
+      max_age:
+        type: integer
+      max_value:
+        type: number
+      min_age:
+        type: integer
+      min_value:
+        type: number
+      note:
+        type: string
+      parameter_id:
+        type: string
+      text_range:
+        type: string
+    required:
+    - parameter_id
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ReferenceRangeResponse:
+    properties:
+      age:
+        type: string
+      gender:
+        type: string
+      note:
+        type: string
+      parameter_id:
+        type: string
+      ref_id:
+        type: string
+      text_range:
+        type: string
+      value:
+        type: string
+    required:
+    - parameter_id
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ReportPrintRequest:
+    properties:
+      copy_number:
+        type: integer
+    required:
+    - copy_number
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ReportPrintResponse:
+    properties:
+      copy_number:
+        type: integer
+      id:
+        type: string
+      printed_at:
+        type: string
+      printed_by:
+        type: string
+      report_id:
+        type: string
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ReportResponse:
+    properties:
+      generated_at:
+        type: string
+      generated_by:
+        type: string
+      id:
+        type: string
+      pdf_path:
+        type: string
+      report_no:
+        type: string
+      status:
+        $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.ReportStatus'
+      visit_id:
+        type: string
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ResultResponse:
+    properties:
+      flag:
+        $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.Flag'
+      id:
+        type: string
+      order_id:
+        type: string
+      parameter_id:
+        type: string
+      performed_at:
+        type: string
+      performed_by:
+        type: string
+      remarks:
+        type: string
+      result_value:
+        type: string
+      verified_by:
+        type: string
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestCatalogRequest:
+    properties:
+      dept_id:
+        type: string
+      id:
+        type: string
+      sample_type:
+        type: string
+      test_code:
+        type: string
+      test_name:
+        type: string
+      test_price:
+        type: number
+      turnaround_time:
+        type: integer
+    required:
+    - dept_id
+    - test_name
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestCatalogResponse:
+    properties:
+      dept_id:
+        type: string
+      sample_type:
+        type: string
+      test_catalog_id:
+        type: string
+      test_code:
+        type: string
+      test_name:
+        type: string
+      test_price:
+        type: number
+      turnaround_time:
+        type: integer
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestParameterRequest:
+    properties:
+      id:
+        type: string
+      parameter_name:
+        type: string
+      result_type:
+        type: string
+      sequence_no:
+        type: integer
+      test_id:
+        type: string
+      unit:
+        type: string
+    required:
+    - parameter_name
+    - test_id
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestParameterResponse:
+    properties:
+      parameter_id:
+        type: string
+      parameter_name:
+        type: string
+      result_type:
+        type: string
+      sequence_no:
+        type: integer
+      test_id:
+        type: string
+      unit:
+        type: string
+    required:
+    - parameter_name
+    - test_id
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.UpdateOrderRequest:
+    properties:
+      panel_id:
+        type: string
+      price:
+        type: number
+      status:
+        $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.OrderStatus'
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.UpdateProfileRequest:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      phone:
+        type: string
+      role_name:
+        type: string
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.UpdateReportRequest:
+    properties:
+      pdf_path:
+        type: string
+      status:
+        $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.ReportStatus'
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.UpdateResultRequest:
+    properties:
+      flag:
+        $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.Flag'
+      remarks:
+        type: string
+      result_value:
+        type: string
+      verified_by:
+        type: string
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.VisitRequest:
+    properties:
+      doctor_id:
+        type: string
+      id:
+        type: string
+      is_deleted:
+        type: boolean
+      patient_id:
+        type: string
+      status:
+        type: string
+      visit_no:
+        type: string
+    required:
+    - patient_id
+    - visit_no
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_core_domain.Department:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_core_domain.Doctor:
+    properties:
+      createdAt:
+        type: string
+      email:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: string
+      lastName:
+        type: string
+      phone:
+        type: string
+      qualification:
+        type: string
+      registrationNo:
+        type: string
+      updatedAt:
+        type: string
+      updatedBy:
+        type: string
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_core_domain.Flag:
+    enum:
+    - normal
+    - low
+    - high
+    - critical
+    - na
+    type: string
+    x-enum-varnames:
+    - Normal
+    - Low
+    - High
+    - Critical
+    - NA
+  github_com_jenish-brainztechs_go-backend_internal_core_domain.Gender:
+    enum:
+    - M
+    - F
+    - O
+    type: string
+    x-enum-varnames:
+    - Male
+    - Female
+    - Other
+  github_com_jenish-brainztechs_go-backend_internal_core_domain.LabSettings:
+    properties:
+      address:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      labName:
+        type: string
+      phone:
+        type: string
+      registrationNo:
+        type: string
+      reportFooter:
+        type: string
+      tagline:
+        type: string
+      updatedAt:
+        type: string
+      updatedBy:
+        type: string
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_core_domain.Login:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_core_domain.LoginResponse:
+    properties:
+      access_token:
+        type: string
+      session_id:
+        type: string
+      user_id:
+        type: string
+      user_type:
+        type: string
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_core_domain.OrderStatus:
+    enum:
+    - completed
+    - collected
+    - result_entered
+    type: string
+    x-enum-varnames:
+    - Complete
+    - Collected
+    - ResultEntered
+  github_com_jenish-brainztechs_go-backend_internal_core_domain.Panels:
+    properties:
+      code:
+        type: string
+      departmentID:
+        type: string
+      id:
+        type: string
+      isActive:
+        type: boolean
+      name:
+        type: string
+      panelPrice:
+        format: float64
+        type: number
+      updatedAt:
+        type: string
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_core_domain.Patient:
+    properties:
+      address:
+        type: string
+      createdAt:
+        type: string
+      dob:
+        type: string
+      email:
+        type: string
+      firstName:
+        type: string
+      gender:
+        $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.Gender'
+      id:
+        type: string
+      lastName:
+        type: string
+      mrn:
+        type: string
+      phone:
+        type: string
+      updatedAt:
+        type: string
+      updatedBy:
+        type: string
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_core_domain.ReportStatus:
+    enum:
+    - draft
+    - final
+    - amended
+    type: string
+    x-enum-varnames:
+    - ReportDraft
+    - ReportFinal
+    - ReportAmended
+  github_com_jenish-brainztechs_go-backend_internal_core_domain.Role:
+    properties:
+      id:
+        type: string
+      roleName:
+        type: string
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_core_domain.Status:
+    enum:
+    - registered
+    - in_progress
+    - completed
+    - cancelled
+    type: string
+    x-enum-varnames:
+    - Registered
+    - InProgress
+    - Completed
+    - Cancelled
+  github_com_jenish-brainztechs_go-backend_internal_core_domain.TestCatalog:
+    properties:
+      code:
+        type: string
+      departmentID:
+        type: string
+      id:
+        type: string
+      isActive:
+        type: boolean
+      name:
+        type: string
+      sampleType:
+        type: string
+      testPrice:
+        format: float64
+        type: number
+      turnAroundTime:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_core_domain.Visit:
+    properties:
+      createdAt:
+        type: string
+      doctorID:
+        type: string
+      id:
+        type: string
+      isDeleted:
+        type: boolean
+      patientID:
+        type: string
+      registeredBy:
+        type: string
+      status:
+        $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.Status'
+      updatedAt:
+        type: string
+      visitDate:
+        type: string
+      visitNo:
+        type: string
+    type: object
+  internal_adapter_handler_http.errorResponse:
+    properties:
+      messages:
+        example:
+        - Error message 1
+        - ' Error message 2'
+        items:
+          type: string
+        type: array
+      success:
+        example: false
+        type: boolean
+    type: object
+  internal_adapter_handler_http.response:
+    properties:
+      data: {}
+      message:
+        example: Success
+        type: string
+      success:
+        example: true
+        type: boolean
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@example.com
+    name: API Support
+  description: Laboratory Information System API
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: LIS Backend API
+  version: "1.0"
+paths:
+  /admin/doctor:
+    post:
+      consumes:
+      - application/json
+      description: Create a new doctor record (admin only)
+      parameters:
+      - description: Doctor details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.CreateDoctor'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.Doctor'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create doctor
+      tags:
+      - Doctors
+  /admin/doctor/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing doctor record (admin only)
+      parameters:
+      - description: Doctor ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Doctor details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.CreateDoctor'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update doctor
+      tags:
+      - Doctors
+  /admin/lab:
+    get:
+      consumes:
+      - application/json
+      description: Get all lab settings (admin only)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.LabResponse'
+                  type: array
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: List all lab settings
+      tags:
+      - Lab Settings
+    post:
+      consumes:
+      - application/json
+      description: Create new lab settings (admin only)
+      parameters:
+      - description: Lab settings details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.LabRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.LabSettings'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create lab settings
+      tags:
+      - Lab Settings
+  /admin/lab-test/create-catalog:
+    post:
+      consumes:
+      - application/json
+      description: Create a new test catalog entry (admin only)
+      parameters:
+      - description: Test catalog details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestCatalogRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.TestCatalog'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create test catalog
+      tags:
+      - Lab Tests
+  /admin/lab-test/create-department:
+    post:
+      consumes:
+      - application/json
+      description: Create a new lab department (admin only)
+      parameters:
+      - description: Department details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.DepartmentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.Department'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create department
+      tags:
+      - Lab Tests
+  /admin/lab-test/create-panel:
+    post:
+      consumes:
+      - application/json
+      description: Create a new test panel (admin only)
+      parameters:
+      - description: Panel details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.PanelRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.Panels'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create panel
+      tags:
+      - Lab Tests
+  /admin/lab-test/create-panel-component:
+    post:
+      consumes:
+      - application/json
+      description: Associate a test catalog with a panel (admin only)
+      parameters:
+      - description: Panel component details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.PanelComponentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create panel component
+      tags:
+      - Lab Tests
+  /admin/lab-test/create-reference:
+    post:
+      consumes:
+      - application/json
+      description: Create a new reference range for a test parameter (admin only)
+      parameters:
+      - description: Reference range details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ReferenceRangeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create reference range
+      tags:
+      - Lab Tests
+  /admin/lab-test/create-test-parameter:
+    post:
+      consumes:
+      - application/json
+      description: Create a new test parameter for a test catalog (admin only)
+      parameters:
+      - description: Test parameter details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestParameterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create test parameter
+      tags:
+      - Lab Tests
+  /admin/lab-test/update-catalog:
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing test catalog (admin only)
+      parameters:
+      - description: Test catalog details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestCatalogRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update test catalog
+      tags:
+      - Lab Tests
+  /admin/lab-test/update-department:
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing department (admin only)
+      parameters:
+      - description: Department details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.DepartmentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update department
+      tags:
+      - Lab Tests
+  /admin/lab-test/update-panel:
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing panel (admin only)
+      parameters:
+      - description: Panel details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.PanelRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update panel
+      tags:
+      - Lab Tests
+  /admin/lab-test/update-reference:
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing reference range (admin only)
+      parameters:
+      - description: Reference range details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ReferenceRangeRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update reference range
+      tags:
+      - Lab Tests
+  /admin/lab-test/update-test-parameter:
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing test parameter (admin only)
+      parameters:
+      - description: Test parameter details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestParameterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update test parameter
+      tags:
+      - Lab Tests
+  /admin/lab/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Update lab settings by ID (admin only)
+      parameters:
+      - description: Lab ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Lab settings details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.LabRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update lab settings
+      tags:
+      - Lab Settings
+  /admin/profile/profile-details:
+    get:
+      consumes:
+      - application/json
+      description: Get all user profiles (admin only)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ProfileResponse'
+                  type: array
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: List all profiles
+      tags:
+      - Profile
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user with email and password
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.LoginResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      summary: Login
+      tags:
+      - Auth
+  /doctor:
+    get:
+      consumes:
+      - application/json
+      description: Get all doctors
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.DoctorResponse'
+                  type: array
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: List doctors
+      tags:
+      - Doctors
+  /doctor/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a doctor's details by ID
+      parameters:
+      - description: Doctor ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.Doctor'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get doctor by ID
+      tags:
+      - Doctors
+  /lab-test/list-catalog/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get all test catalogs for a given department
+      parameters:
+      - description: Department ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestCatalogResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: List test catalogs by department
+      tags:
+      - Lab Tests
+  /lab-test/list-department:
+    get:
+      consumes:
+      - application/json
+      description: Get all lab departments
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.DepartmentResponse'
+                  type: array
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: List departments
+      tags:
+      - Lab Tests
+  /lab-test/list-panel-catalog/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get all panel components for a given panel
+      parameters:
+      - description: Panel ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.PanelComponentResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: List panel components by panel
+      tags:
+      - Lab Tests
+  /lab-test/list-panel/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get all panels for a given department
+      parameters:
+      - description: Department ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.PanelResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: List panels by department
+      tags:
+      - Lab Tests
+  /lab-test/list-reference/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get all reference ranges for a given test parameter
+      parameters:
+      - description: Test Parameter ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ReferenceRangeResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: List reference ranges by parameter
+      tags:
+      - Lab Tests
+  /lab-test/list-test-parameter/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get all test parameters for a given test catalog
+      parameters:
+      - description: Test Catalog ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestParameterResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: List test parameters by catalog
+      tags:
+      - Lab Tests
+  /lab/get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get lab settings by ID
+      parameters:
+      - description: Lab ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.LabSettings'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get lab settings
+      tags:
+      - Lab Settings
+  /order:
+    post:
+      consumes:
+      - application/json
+      description: Create a new test order for a visit
+      parameters:
+      - description: Order details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.CreateOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.OrderResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create order
+      tags:
+      - Orders
+  /order/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get an order's details by ID
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.OrderResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get order by ID
+      tags:
+      - Orders
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing order
+      parameters:
+      - description: Order ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Order details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.UpdateOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update order
+      tags:
+      - Orders
+  /order/visit/{visit_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get all orders for a given visit
+      parameters:
+      - description: Visit ID
+        in: path
+        name: visit_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.OrderResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: List orders by visit
+      tags:
+      - Orders
+  /patient:
+    get:
+      consumes:
+      - application/json
+      description: Get all patients
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.PatientResponse'
+                  type: array
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: List patients
+      tags:
+      - Patients
+    post:
+      consumes:
+      - application/json
+      description: Create a new patient record
+      parameters:
+      - description: Patient details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.CreatePatient'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.Patient'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create patient
+      tags:
+      - Patients
+  /patient/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a patient's details by ID
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.PatientResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get patient by ID
+      tags:
+      - Patients
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing patient record
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Patient details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.CreatePatient'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update patient
+      tags:
+      - Patients
+  /profile/getme:
+    get:
+      consumes:
+      - application/json
+      description: Get the profile of the currently authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ProfileResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get my profile
+      tags:
+      - Profile
+  /profile/update-profile/{id}:
+    patch:
+      consumes:
+      - application/json
+      description: Update the profile of the currently authenticated user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Profile details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.UpdateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update profile
+      tags:
+      - Profile
+  /report:
+    post:
+      consumes:
+      - application/json
+      description: Create a new report for a visit
+      parameters:
+      - description: Report details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.CreateReportRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ReportResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create report
+      tags:
+      - Reports
+  /report/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a report's details by ID
+      parameters:
+      - description: Report ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ReportResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get report by ID
+      tags:
+      - Reports
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing report
+      parameters:
+      - description: Report ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Report details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.UpdateReportRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update report
+      tags:
+      - Reports
+  /report/{id}/print:
+    post:
+      consumes:
+      - application/json
+      description: Create a print record for a report
+      parameters:
+      - description: Report ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Print details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ReportPrintRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ReportPrintResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create report print
+      tags:
+      - Reports
+  /report/{id}/prints:
+    get:
+      consumes:
+      - application/json
+      description: Get all print records for a given report
+      parameters:
+      - description: Report ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ReportPrintResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: List report prints
+      tags:
+      - Reports
+  /report/visit/{visit_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get all reports for a given visit
+      parameters:
+      - description: Visit ID
+        in: path
+        name: visit_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ReportResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: List reports by visit
+      tags:
+      - Reports
+  /result:
+    post:
+      consumes:
+      - application/json
+      description: Create batch test results for an order
+      parameters:
+      - description: Batch result details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.BatchCreateResultRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ResultResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create results
+      tags:
+      - Results
+  /result/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a result's details by ID
+      parameters:
+      - description: Result ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ResultResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get result by ID
+      tags:
+      - Results
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing result
+      parameters:
+      - description: Result ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Result details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.UpdateResultRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update result
+      tags:
+      - Results
+  /result/order/{order_id}:
+    get:
+      consumes:
+      - application/json
+      description: Get all results for a given order
+      parameters:
+      - description: Order ID
+        in: path
+        name: order_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ResultResponse'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: List results by order
+      tags:
+      - Results
+  /role/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user role
+      parameters:
+      - description: Role details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.CreateRole'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.Role'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      summary: Create role
+      tags:
+      - Roles
+  /user/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with role and profile
+      parameters:
+      - description: User details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.CreateUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      summary: Create user
+      tags:
+      - Users
+  /visit:
+    post:
+      consumes:
+      - application/json
+      description: Create a new patient visit
+      parameters:
+      - description: Visit details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.CreateVisit'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.Visit'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Create visit
+      tags:
+      - Visits
+  /visit/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a visit's details by ID
+      parameters:
+      - description: Visit ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ListVisits'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Get visit by ID
+      tags:
+      - Visits
+    patch:
+      consumes:
+      - application/json
+      description: Update an existing visit
+      parameters:
+      - description: Visit ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Visit details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.VisitRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Update visit
+      tags:
+      - Visits
+  /visit/patient/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get all visits for a given patient
+      parameters:
+      - description: Patient ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ListVisits'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: List visits by patient
+      tags:
+      - Visits
+securityDefinitions:
+  BearerAuth:
+    description: 'Enter the token with the `Bearer: ` prefix, e.g. "Bearer abcde12345".'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
