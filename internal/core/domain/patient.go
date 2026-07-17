@@ -21,7 +21,7 @@ type Patient struct {
 	Email     string
 	Phone     *string
 	MRN       string
-	DOB       time.Time
+	DOB       string
 	Gender    Gender
 	Address   string
 	CreatedAt time.Time

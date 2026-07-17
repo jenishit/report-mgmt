@@ -1,8 +1,6 @@
 package dto
 
 import (
-	"time"
-
 	"github.com/google/uuid"
 	"github.com/jenish-brainztechs/go-backend/internal/core/domain"
 )
@@ -25,7 +23,7 @@ type PatientResponse struct {
 	Email     string        `json:"email"` //the acceptable string type is of email type
 	Phone     string        `json:"phone"`
 	MRN       string        `json:"mrn"`
-	DOB       time.Time     `json:"dob"`
+	DOB       string        `json:"dob"`
 	Gender    domain.Gender `json:"gender"`
 	Address   string        `json:"address"`
 }

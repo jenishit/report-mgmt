@@ -603,8 +603,6 @@ func (lr *LabTestsRepository) UpdatePanel(ctx context.Context, panel *domain.Pan
 }
 
 func (lr *LabTestsRepository) UpdateTestCatalog(ctx context.Context, test *domain.TestCatalog) error {
-	now := time.Now()
-
 	builder := sq.
 		Update("test_catalog").
 		PlaceholderFormat(sq.Dollar).
@@ -626,9 +624,11 @@ func (lr *LabTestsRepository) UpdateTestCatalog(ctx context.Context, test *domai
 		builder = builder.Set("turnaround_hours", test.TurnAroundTime)
 	}
 
-	builder = builder.Set("updated_at", now)
+	builder = builder.Set("updated_at", time.Now())
 
 	query, args, err := builder.ToSql()
+	fmt.Println(query)
+	fmt.Println(args)
 	if err != nil {
 		return fmt.Errorf("failed to build SQL query: %w", err)
 	}

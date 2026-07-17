@@ -39,6 +39,8 @@ func NewRouter(
 
 	// Middleware order matters - apply in this sequence:
 
+	router.Use(gin.Logger())
+
 	// 2. For Lambda Function URL deployments, let AWS handle CORS if explicitly enabled.
 	if !config.HTTP.UseFunctionURLCORS {
 		allowedOrigins := config.HTTP.AllowedOrigins

@@ -31,6 +31,16 @@ type TestCatalogRequest struct {
 	TurnaroundTime int       `json:"turnaround_time"`
 }
 
+type UpdateTestCatalogRequest struct {
+	ID             uuid.UUID `json:"id"`
+	Name           *string    `json:"test_name"`
+	DepartmentID   *uuid.UUID `json:"dept_id"`
+	Code           *string    `json:"test_code"`
+	TestPrice      *float64   `json:"test_price"`
+	SampleType     *string    `json:"sample_type"`
+	TurnaroundTime *int       `json:"turnaround_time"`
+}
+
 type PanelComponentRequest struct {
 	PanelID    uuid.UUID `json:"panel_id" binding:"required"`
 	TestID     uuid.UUID `json:"test_id" binding:"required"`

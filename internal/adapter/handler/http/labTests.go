@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -526,22 +527,23 @@ func (lth *LabTestsHandler) UpdatePanel(ctx *gin.Context) {
 // @Failure 401 {object} errorResponse
 // @Router /admin/lab-test/update-catalog [patch]
 func (lth *LabTestsHandler) UpdateTestCatalog(ctx *gin.Context) {
-	var req dto.TestCatalogRequest
-	now := time.Now()
+	var req dto.UpdateTestCatalogRequest
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		validationError(ctx, err)
 		return
 	}
 
+	
+
 	catalog := &domain.TestCatalog{
-		DepartmentID:   req.DepartmentID,
-		Name:           req.Name,
-		Code:           &req.Code,
-		SampleType:     &req.SampleType,
-		TestPrice:      &req.TestPrice,
-		TurnAroundTime: &req.TurnaroundTime,
-		UpdatedAt:      now,
+		ID:             req.ID,
+		DepartmentID:   *req.DepartmentID,
+		Name:           *req.Name,
+		Code:           req.Code,
+		SampleType:     req.SampleType,
+		TestPrice:      req.TestPrice,
+		TurnAroundTime: req.TurnaroundTime,
 	}
 
 	err := lth.svc.UpdateTestCatalog(ctx, catalog)
@@ -568,6 +570,7 @@ func (lth *LabTestsHandler) UpdateTestCatalog(ctx *gin.Context) {
 // @Router /admin/lab-test/update-test-parameter [patch]
 func (lth *LabTestsHandler) UpdateTestParameter(ctx *gin.Context) {
 	var req dto.TestParameterRequest
+
 	now := time.Now()
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -583,7 +586,7 @@ func (lth *LabTestsHandler) UpdateTestParameter(ctx *gin.Context) {
 		SequenceNo:    req.SequenceNo,
 		UpdatedAt:     now,
 	}
-
+	fmt.Println(parameter)
 	err := lth.svc.UpdateTestParameter(ctx, parameter)
 
 	if err != nil {
