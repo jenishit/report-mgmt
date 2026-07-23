@@ -21,6 +21,11 @@ type PanelRequest struct {
 	PanelPrice   float64   `json:"panel_price"`
 }
 
+type CreatePanelRes struct {
+	ID   uuid.UUID `json:"id"`
+	Name string    `json:"panel_name" binding:"required"`
+}
+
 type TestCatalogRequest struct {
 	ID             uuid.UUID `json:"id"`
 	Name           string    `json:"test_name" binding:"required"`
@@ -32,7 +37,7 @@ type TestCatalogRequest struct {
 }
 
 type UpdateTestCatalogRequest struct {
-	ID             uuid.UUID `json:"id"`
+	ID             uuid.UUID  `json:"id"`
 	Name           *string    `json:"test_name"`
 	DepartmentID   *uuid.UUID `json:"dept_id"`
 	Code           *string    `json:"test_code"`
@@ -297,3 +302,45 @@ func GetReferenceRangesResponse(rr []*domain.ReferenceRange) []*ReferenceRangeRe
 
 	return ranges
 }
+
+type TestCatalogItem struct {
+	ID    string  `json:"test_catalog_id"`
+	Name  string  `json:"test_catalog_name"`
+	Code  string  `json:"test_catalog_code"`
+	Price float64 `json:"test_catalog_price"`
+}
+
+type TestCatalogByPanelID struct {
+	ID    string           `json:"panel_id"`
+	Name  string           `json:"panel_name"`
+	Code  string           `json:"panel_code"`
+	Price float64          `json:"panel_price"`
+	Items []TestCatalogItem `json:"test_catalog_items"`
+}
+
+func GetTestCatalogByPanelID(data []*domain.CategoryByPanelID) *TestCatalogByPanelID {
+	if len(data) == 0 {
+		return nil
+	}
+
+	res := &TestCatalogByPanelID{
+		ID:    data[0].PanelID.String(),
+		Name:  data[0].PanelName,
+		Code:  data[0].PanelCode,
+		Price: data[0].PanelPrice,
+		Items: make([]TestCatalogItem, 0, len(data)),
+	}
+
+	for _, d := range data {
+		res.Items = append(res.Items, TestCatalogItem{
+			ID:    d.TestID.String(),
+			Name:  d.TestCatalogName,
+			Code:  d.TestCatalogCode,
+			Price: d.TestCatalogPrice,
+		})
+	}
+
+	return res
+}
+
+

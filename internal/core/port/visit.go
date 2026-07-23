@@ -11,6 +11,7 @@ type VisitRepository interface {
 	CreateVisit(ctx context.Context, visit *domain.Visit) (*domain.Visit, error)
 	GetVisitByID(ctx context.Context, id uuid.UUID) (*domain.ListVisit, error)
 	GetVisitByPatientID(ctx context.Context, id uuid.UUID) ([]*domain.ListVisit, error)
+	GetVisits(ctx context.Context) ([]*domain.ListVisit, error)
 	UpdateVisitByID(ctx context.Context, v *domain.Visit) error
 }
 
@@ -18,5 +19,6 @@ type VisitService interface {
 	CreateVisit(ctx context.Context, visit *domain.Visit) (*domain.Visit, error)
 	GetVisitByID(ctx context.Context, id uuid.UUID) (*domain.ListVisit, error)
 	GetVisitByPatientID(ctx context.Context, id uuid.UUID) ([]*domain.ListVisit, error)
+	GetVisits(ctx context.Context) ([]*domain.ListVisit, error)
 	UpdateVisitByID(ctx context.Context, v *domain.Visit) error
 }

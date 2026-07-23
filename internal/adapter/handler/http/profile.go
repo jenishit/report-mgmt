@@ -2,6 +2,7 @@ package http
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/jenish-brainztechs/go-backend/internal/adapter/handler/http/dto"
 	"github.com/jenish-brainztechs/go-backend/internal/core/domain"
 	"github.com/jenish-brainztechs/go-backend/internal/core/port"
@@ -87,15 +88,12 @@ func (ph *ProfileHandler) GetProfiles(ctx *gin.Context) {
 // @Failure 401 {object} errorResponse
 // @Router /profile/update-profile/{id} [patch]
 func (ph *ProfileHandler) UpdateProfileByUserID(ctx *gin.Context) {
-	payload, exists := ctx.Get(authorizationPayloadKey)
-	if !exists {
-		validationError(ctx, domain.ErrEmptyAuthorizationHeader)
-		return
-	}
+	id := ctx.Param("id")
 
-	userPayload, ok := payload.(*domain.TokenPayload)
-	if !ok {
-		validationError(ctx, domain.ErrInvalidAuthorizationHeader)
+	uid, err := uuid.Parse(id)
+
+	if err != nil {
+		parseError(err)
 		return
 	}
 
@@ -106,13 +104,13 @@ func (ph *ProfileHandler) UpdateProfileByUserID(ctx *gin.Context) {
 	}
 
 	profile := &domain.GetProfileDetails{
-		UserID:    userPayload.UserId,
+		UserID:    uid,
 		FirstName: req.FirstName,
 		LastName:  req.LastName,
 		Phone:     req.Phone,
 	}
 
-	err := ph.psvc.UpdateProfileByUserID(ctx, profile)
+	err = ph.psvc.UpdateProfileByUserID(ctx, profile)
 	if err != nil {
 		handleError(ctx, err)
 		return

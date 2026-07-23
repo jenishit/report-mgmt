@@ -70,3 +70,7 @@ func (lts *LabTestsService) UpdateTestParameter(ctx context.Context, parameter *
 func (lts *LabTestsService) UpdateReferenceRange(ctx context.Context, rangeData *domain.ReferenceRange) error {
 	return lts.repo.UpdateReferenceRange(ctx, rangeData)
 }
+
+func (lts *LabTestsService) GetTestCatalogByPanelID(ctx context.Context, id uuid.UUID) ([]*domain.CategoryByPanelID, error) {
+	return lts.repo.GetTestCatalogByPanelID(ctx, id)
+}

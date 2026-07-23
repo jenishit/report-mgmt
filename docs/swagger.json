@@ -970,64 +970,6 @@
                 }
             }
         },
-        "/auth/login": {
-            "post": {
-                "description": "Authenticate user with email and password",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Auth"
-                ],
-                "summary": "Login",
-                "parameters": [
-                    {
-                        "description": "Login credentials",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.Login"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/internal_adapter_handler_http.response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.LoginResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/internal_adapter_handler_http.errorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/internal_adapter_handler_http.errorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/doctor": {
             "get": {
                 "security": [
@@ -1137,6 +1079,67 @@
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapter_handler_http.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/lab-test/list-catalog-by-panel/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get all test catalogs for a given panel, grouped under panel info",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Lab Tests"
+                ],
+                "summary": "List test catalogs by panel",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Panel ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal_adapter_handler_http.response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestCatalogByPanelID"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapter_handler_http.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/internal_adapter_handler_http.errorResponse"
                         }
@@ -3877,6 +3880,46 @@
                 }
             }
         },
+        "github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestCatalogByPanelID": {
+            "type": "object",
+            "properties": {
+                "panel_code": {
+                    "type": "string"
+                },
+                "panel_id": {
+                    "type": "string"
+                },
+                "panel_name": {
+                    "type": "string"
+                },
+                "panel_price": {
+                    "type": "number"
+                },
+                "test_catalog_items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestCatalogItem"
+                    }
+                }
+            }
+        },
+        "github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestCatalogItem": {
+            "type": "object",
+            "properties": {
+                "test_catalog_code": {
+                    "type": "string"
+                },
+                "test_catalog_id": {
+                    "type": "string"
+                },
+                "test_catalog_name": {
+                    "type": "string"
+                },
+                "test_catalog_price": {
+                    "type": "number"
+                }
+            }
+        },
         "github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestCatalogRequest": {
             "type": "object",
             "required": [
@@ -4189,38 +4232,6 @@
                     "type": "string"
                 },
                 "updatedBy": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_jenish-brainztechs_go-backend_internal_core_domain.Login": {
-            "type": "object",
-            "required": [
-                "email",
-                "password"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "github_com_jenish-brainztechs_go-backend_internal_core_domain.LoginResponse": {
-            "type": "object",
-            "properties": {
-                "access_token": {
-                    "type": "string"
-                },
-                "session_id": {
-                    "type": "string"
-                },
-                "user_id": {
-                    "type": "string"
-                },
-                "user_type": {
                     "type": "string"
                 }
             }

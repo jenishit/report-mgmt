@@ -125,7 +125,7 @@ func NewRouter(
 		labTest.GET("/list-panel-catalog/:id", labTestsHandler.GetPanelComponentsByPanelID)
 		labTest.GET("/list-test-parameter/:id", labTestsHandler.GetTestParametersByTestCatalogID)
 		labTest.GET("/list-reference/:id", labTestsHandler.GetReferenceRangesByTestParameterID)
-
+		labTest.GET("/list-catalog-by-panel/:id", labTestsHandler.GetTestCatalogByPanelID)
 	}
 
 	doc := admin.Group("/doctor")
@@ -151,6 +151,7 @@ func NewRouter(
 	visit := api.Group("/visit").Use(authMiddleware(token))
 	{
 		visit.POST("", visitHandler.CreateVisit)
+		visit.GET("", visitHandler.GetVisits)
 		visit.GET("/:id", visitHandler.GetVisitByID)
 		visit.PATCH("/:id", visitHandler.UpdateVisitByID)
 		visit.GET("/patient/:id", visitHandler.GetVisitByPatientID)

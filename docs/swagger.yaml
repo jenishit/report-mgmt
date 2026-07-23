@@ -453,6 +453,32 @@ definitions:
       verified_by:
         type: string
     type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestCatalogByPanelID:
+    properties:
+      panel_code:
+        type: string
+      panel_id:
+        type: string
+      panel_name:
+        type: string
+      panel_price:
+        type: number
+      test_catalog_items:
+        items:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestCatalogItem'
+        type: array
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestCatalogItem:
+    properties:
+      test_catalog_code:
+        type: string
+      test_catalog_id:
+        type: string
+      test_catalog_name:
+        type: string
+      test_catalog_price:
+        type: number
+    type: object
   github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestCatalogRequest:
     properties:
       dept_id:
@@ -663,27 +689,6 @@ definitions:
       updatedAt:
         type: string
       updatedBy:
-        type: string
-    type: object
-  github_com_jenish-brainztechs_go-backend_internal_core_domain.Login:
-    properties:
-      email:
-        type: string
-      password:
-        type: string
-    required:
-    - email
-    - password
-    type: object
-  github_com_jenish-brainztechs_go-backend_internal_core_domain.LoginResponse:
-    properties:
-      access_token:
-        type: string
-      session_id:
-        type: string
-      user_id:
-        type: string
-      user_type:
         type: string
     type: object
   github_com_jenish-brainztechs_go-backend_internal_core_domain.OrderStatus:
@@ -1433,41 +1438,6 @@ paths:
       summary: List all profiles
       tags:
       - Profile
-  /auth/login:
-    post:
-      consumes:
-      - application/json
-      description: Authenticate user with email and password
-      parameters:
-      - description: Login credentials
-        in: body
-        name: request
-        required: true
-        schema:
-          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.Login'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/internal_adapter_handler_http.response'
-            - properties:
-                data:
-                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.LoginResponse'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
-      summary: Login
-      tags:
-      - Auth
   /doctor:
     get:
       consumes:
@@ -1536,6 +1506,42 @@ paths:
       summary: Get doctor by ID
       tags:
       - Doctors
+  /lab-test/list-catalog-by-panel/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get all test catalogs for a given panel, grouped under panel info
+      parameters:
+      - description: Panel ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestCatalogByPanelID'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: List test catalogs by panel
+      tags:
+      - Lab Tests
   /lab-test/list-catalog/{id}:
     get:
       consumes:

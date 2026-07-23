@@ -24,7 +24,7 @@ type GetProfileDetails struct {
 	UserID    uuid.UUID `json:"user_id"`
 	FirstName string    `json:"first_name"`
 	LastName  string    `json:"last_name"`
-	Phone     *string   `json:"phone"`
+	Phone     string    `json:"phone"`
 	RoleName  string    `json:"role_name"`
 	Email     string    `json:"email"`
 }
