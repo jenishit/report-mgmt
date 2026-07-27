@@ -17,6 +17,18 @@ func NewAuthHandler(authService port.AuthService) *AuthHandler {
 }
 
 
+// Login authenticates a user and returns a JWT token
+// @Summary Login
+// @Description Authenticate a user with email and password
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Param request body domain.Login true "Login credentials"
+// @Success 200 {object} response{data=domain.LoginResponse}
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Router /auth/login [post]
 func (h *AuthHandler) Login(ctx *gin.Context) {
 	var req domain.Login
 	if err := ctx.ShouldBindJSON(&req); err != nil {

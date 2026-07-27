@@ -623,6 +623,7 @@ func (lth *LabTestsHandler) UpdateReferenceRange(ctx *gin.Context) {
 	}
 
 	ref := &domain.ReferenceRange{
+		ID: req.ID,
 		TestParameterID: req.ParameterID,
 		Gender:          req.Gender,
 		MinAge:          &req.MinAge,
