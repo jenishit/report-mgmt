@@ -186,7 +186,7 @@ func (pr *ProfileRepository) UpdateProfileByUserID(ctx context.Context, prof *do
 	}
 
 	query, args, err := builder.ToSql()
-	fmt.Printf(query)
+	
 	if err != nil {
 		return fmt.Errorf("failed to build SQL query: %w", err)
 	}
