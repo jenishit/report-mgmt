@@ -10,6 +10,7 @@ import (
 type UserRepository interface {
 	CreateUser(ctx context.Context, user *domain.User) (*domain.User, error)
 	GetUserByEmail(ctx context.Context, login *domain.Login) (*domain.BasicDetails, error)
+	UpdatePassword(ctx context.Context, reset *domain.PasswordReset) error
 }
 
 type UserService interface {

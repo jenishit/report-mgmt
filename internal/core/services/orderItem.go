@@ -31,3 +31,7 @@ func (s *OrderService) GetOrdersByVisitID(ctx context.Context, visitID uuid.UUID
 func (s *OrderService) UpdateOrder(ctx context.Context, order *domain.Order) error {
 	return s.repo.UpdateOrder(ctx, order)
 }
+
+func (s *OrderService) ListOrders(ctx context.Context) ([]*domain.ListOrders, error) {
+	return s.repo.ListOrders(ctx)
+}

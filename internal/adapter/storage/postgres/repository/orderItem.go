@@ -186,3 +186,74 @@ func (or *OrderRepository) UpdateOrder(ctx context.Context, order *domain.Order)
 
 	return nil
 }
+
+func (or *OrderRepository) ListOrders(ctx context.Context) ([]*domain.ListOrders, error) {
+	var status string
+
+	query := `
+		SELECT
+		O.ID,
+		V.VISIT_NO,
+		P.FIRST_NAME,
+		P.LAST_NAME,
+		TC.NAME,
+		TC.CODE,
+		TC.PRICE,
+		PC.NAME,
+		PC.CODE,
+		PC.PANEL_PRICE,
+		O.STATUS,
+		O.PRICE,
+		PR.FIRST_NAME,
+		PR.LAST_NAME,
+		O.COLLECTED_AT
+	FROM
+		ORDER_ITEM O
+		LEFT JOIN VISITS V ON O.VISIT_ID = V.ID
+		LEFT JOIN PATIENTS P ON V.PATIENT_ID = P.ID
+		LEFT JOIN TEST_CATALOG TC ON O.TEST_ID = TC.ID
+		LEFT JOIN PANELS PC ON O.PANEL_ID = PC.ID
+		LEFT JOIN USERS U ON O.COLLECTED_BY = U.ID
+		LEFT JOIN PROFILE PR ON U.ID = PR.USER_ID
+	`
+
+	rows, err := or.DB.Query(ctx, query)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var orders []*domain.ListOrders
+
+	for rows.Next() {
+		var o domain.ListOrders
+
+		err := rows.Scan(
+			&o.ID,
+			&o.VisitNo,
+			&o.PtFirstName,
+			&o.PtLastName,
+			&o.TestName,
+			&o.TestCode,
+			&o.TestPrice,
+			&o.PanelName,
+			&o.PanelCode,
+			&o.PanelPrice,
+			&status,
+			&o.Price,
+			&o.CollectorFirstName,
+			&o.CollectorLastName,
+			&o.CollectedAt,
+		)
+
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan row: %w", err)
+		}
+
+		o.Status = domain.OrderStatus(status)
+
+		orders = append(orders, &o)
+	}
+
+	return orders, nil
+}

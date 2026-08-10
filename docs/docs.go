@@ -976,6 +976,64 @@ const docTemplate = `{
                 }
             }
         },
+        "/auth/forgot-password": {
+            "post": {
+                "description": "Request a password reset OTP for an email",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Forgot Password",
+                "parameters": [
+                    {
+                        "description": "Email to reset password for",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.ForgotPasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal_adapter_handler_http.response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.ForgotPasswordResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapter_handler_http.errorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapter_handler_http.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/auth/login": {
             "post": {
                 "description": "Authenticate a user with email and password",
@@ -1033,6 +1091,46 @@ const docTemplate = `{
                     },
                     "404": {
                         "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapter_handler_http.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/reset-password": {
+            "post": {
+                "description": "Reset the password using email and the OTP",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Reset Password",
+                "parameters": [
+                    {
+                        "description": "Email, OTP and new password",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.ResetPasswordRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapter_handler_http.response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/internal_adapter_handler_http.errorResponse"
                         }
@@ -1709,6 +1807,61 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapter_handler_http.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/order/list": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get a list of all orders",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "List orders",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/internal_adapter_handler_http.response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ListOrders"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/internal_adapter_handler_http.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/internal_adapter_handler_http.errorResponse"
                         }
@@ -3652,6 +3805,47 @@ const docTemplate = `{
                 }
             }
         },
+        "github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ListOrders": {
+            "type": "object",
+            "properties": {
+                "collected_by": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "panel_code": {
+                    "type": "string"
+                },
+                "panel_name": {
+                    "type": "string"
+                },
+                "panel_price": {
+                    "type": "number"
+                },
+                "patinet_name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "status": {
+                    "$ref": "#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.OrderStatus"
+                },
+                "test_code": {
+                    "type": "string"
+                },
+                "test_name": {
+                    "type": "string"
+                },
+                "test_price": {
+                    "type": "number"
+                },
+                "visit_no": {
+                    "type": "integer"
+                }
+            }
+        },
         "github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ListVisits": {
             "type": "object",
             "properties": {
@@ -4311,6 +4505,31 @@ const docTemplate = `{
                 "NA"
             ]
         },
+        "github_com_jenish-brainztechs_go-backend_internal_core_domain.ForgotPasswordRequest": {
+            "type": "object",
+            "required": [
+                "email"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                }
+            }
+        },
+        "github_com_jenish-brainztechs_go-backend_internal_core_domain.ForgotPasswordResponse": {
+            "type": "object",
+            "properties": {
+                "expires_at": {
+                    "type": "string"
+                },
+                "otp": {
+                    "type": "string"
+                },
+                "reset_url": {
+                    "type": "string"
+                }
+            }
+        },
         "github_com_jenish-brainztechs_go-backend_internal_core_domain.Gender": {
             "type": "string",
             "enum": [
@@ -4484,6 +4703,25 @@ const docTemplate = `{
                 "ReportFinal",
                 "ReportAmended"
             ]
+        },
+        "github_com_jenish-brainztechs_go-backend_internal_core_domain.ResetPasswordRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "new_password",
+                "otp"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "new_password": {
+                    "type": "string"
+                },
+                "otp": {
+                    "type": "string"
+                }
+            }
         },
         "github_com_jenish-brainztechs_go-backend_internal_core_domain.Role": {
             "type": "object",

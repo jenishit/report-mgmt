@@ -56,6 +56,8 @@ func NewRouter(
 	auth := api.Group("/auth")
 	{
 		auth.POST("/login", authHandler.Login)
+		auth.POST("/forgot-password", authHandler.ForgotPassword)
+		auth.POST("/reset-password", authHandler.ResetPassword)
 	}
 
 	role := api.Group("/role")
@@ -163,6 +165,7 @@ func NewRouter(
 		order.GET("/:id", orderHandler.GetOrderByID)
 		order.PATCH("/:id", orderHandler.UpdateOrder)
 		order.GET("/visit/:visit_id", orderHandler.GetOrdersByVisitID)
+		order.GET("/list", orderHandler.ListOrders)
 	}
 
 	result := api.Group("/result").Use(authMiddleware(token))

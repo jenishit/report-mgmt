@@ -172,3 +172,27 @@ func (h *OrderHandler) UpdateOrder(ctx *gin.Context) {
 
 	handleSuccess(ctx, gin.H{"message": "Order updated successfully"})
 }
+
+// ListOrders lists all orders
+// @Summary List orders
+// @Description Get a list of all orders
+// @Tags Orders
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} response{data=[]dto.ListOrders}
+// @Failure 401 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /order/list [get]
+func (h *OrderHandler) ListOrders(ctx *gin.Context) {
+	res, err := h.svc.ListOrders(ctx)
+
+	if err != nil {
+		handleError(ctx, err)
+		return
+	}
+
+	rsp := dto.ListOrderResponse(res)
+
+	handleSuccess(ctx, rsp)
+}

@@ -32,6 +32,21 @@ type OrderResponse struct {
 	CollectedAt time.Time          `json:"collected_at"`
 }
 
+type ListOrders struct {
+	ID          uuid.UUID          `json:"id"`
+	VisitNo     string             `json:"visit_no"`
+	PatientName string             `json:"patinet_name"`
+	TestName    string             `json:"test_name"`
+	TestCode    string             `json:"test_code"`
+	TestPrice   float64            `json:"test_price"`
+	PanelName   string             `json:"panel_name"`
+	PanelCode   string             `json:"panel_code"`
+	PanelPrice  float64            `json:"panel_price"`
+	Status      domain.OrderStatus `json:"status"`
+	Price       float64            `json:"price"`
+	CollectedBy string             `json:"collected_by"`
+}
+
 func OrderResponseFromDomain(o *domain.Order) *OrderResponse {
 	r := &OrderResponse{
 		ID:          o.ID,
@@ -56,4 +71,43 @@ func OrdersResponseFromDomain(orders []*domain.Order) []*OrderResponse {
 		res = append(res, OrderResponseFromDomain(o))
 	}
 	return res
+}
+
+func ListOrderRes(lo *domain.ListOrders) *ListOrders {
+	return &ListOrders{
+		ID:          lo.ID,
+		VisitNo:     lo.VisitNo,
+		PatientName: lo.PtFirstName + lo.PtLastName,
+		TestName:    lo.TestName,
+		TestCode:    lo.TestCode,
+		TestPrice:   lo.TestPrice,
+		PanelName:   lo.PanelName,
+		PanelCode:   lo.PanelCode,
+		PanelPrice:  lo.PanelPrice,
+		Status:      lo.Status,
+		Price:       lo.Price,
+		CollectedBy: lo.CollectorFirstName + lo.CollectorLastName,
+	}
+}
+
+func ListOrderResponse(listOrders []*domain.ListOrders) []*ListOrders {
+	orders := make([]*ListOrders, 0, len(listOrders))
+
+	for _, lo := range listOrders {
+		orders = append(orders, &ListOrders{
+			ID:          lo.ID,
+			VisitNo:     lo.VisitNo,
+			PatientName: lo.PtFirstName + lo.PtLastName,
+			TestName:    lo.TestName,
+			TestCode:    lo.TestCode,
+			TestPrice:   lo.TestPrice,
+			PanelName:   lo.PanelName,
+			PanelCode:   lo.PanelCode,
+			PanelPrice:  lo.PanelPrice,
+			Status:      lo.Status,
+			Price:       lo.Price,
+			CollectedBy: lo.CollectorFirstName + lo.CollectorLastName,
+		})
+	}
+	return orders
 }

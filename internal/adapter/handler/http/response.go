@@ -23,6 +23,8 @@ var errorStatusMap = map[error]int{
 	domain.ErrForbidden:                  http.StatusForbidden,
 	domain.ErrNoUpdatedData:              http.StatusBadRequest,
 	domain.ErrInvalidUUID:                http.StatusBadRequest,
+	domain.ErrInvalidOTP:                 http.StatusBadRequest,
+	domain.ErrExpiredOTP:                 http.StatusBadRequest,
 }
 
 // validationError sends an error response for some specific request validation error

@@ -12,6 +12,7 @@ type OrderRepository interface {
 	GetOrderByID(ctx context.Context, id uuid.UUID) (*domain.Order, error)
 	GetOrdersByVisitID(ctx context.Context, visitID uuid.UUID) ([]*domain.Order, error)
 	UpdateOrder(ctx context.Context, order *domain.Order) error
+	ListOrders(ctx context.Context) ([]*domain.ListOrders, error)
 }
 
 type OrderService interface {
@@ -19,4 +20,5 @@ type OrderService interface {
 	GetOrderByID(ctx context.Context, id uuid.UUID) (*domain.Order, error)
 	GetOrdersByVisitID(ctx context.Context, visitID uuid.UUID) ([]*domain.Order, error)
 	UpdateOrder(ctx context.Context, order *domain.Order) error
+	ListOrders(ctx context.Context) ([]*domain.ListOrders, error)
 }

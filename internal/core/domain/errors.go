@@ -33,6 +33,7 @@ var (
 	// ErrExpiredToken is an error for when the access token is expired
 	ErrExpiredToken = errors.New("access token has expired")
 	ErrExpiredOTP   = errors.New("OTP code invalid")
+	ErrInvalidOTP   = errors.New("OTP is invalid or has expired")
 	// ErrInvalidToken is an error for when the access token is invalid
 	ErrInvalidToken = errors.New("access token is invalid")
 	// ErrInvalidCredentials is an error for when the credentials are invalid
