@@ -23,3 +23,6 @@ vendor/
 .env
 
 /graphify-out
+
+# Local build artifacts / air live-reload output
+/tmp/
