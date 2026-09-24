@@ -188,7 +188,21 @@ func (or *OrderRepository) UpdateOrder(ctx context.Context, order *domain.Order)
 }
 
 func (or *OrderRepository) ListOrders(ctx context.Context) ([]*domain.ListOrders, error) {
-	var status string
+	var (
+		visitNo            sql.NullString
+		ptFirstName        sql.NullString
+		ptLastName         sql.NullString
+		testName           sql.NullString
+		testCode           sql.NullString
+		testPrice          sql.NullFloat64
+		panelName          sql.NullString
+		panelCode          sql.NullString
+		panelPrice         sql.NullFloat64
+		status             sql.NullString
+		price              sql.NullFloat64
+		collectorFirstName sql.NullString
+		collectorLastName  sql.NullString
+	)
 
 	query := `
 		SELECT
@@ -230,19 +244,19 @@ func (or *OrderRepository) ListOrders(ctx context.Context) ([]*domain.ListOrders
 
 		err := rows.Scan(
 			&o.ID,
-			&o.VisitNo,
-			&o.PtFirstName,
-			&o.PtLastName,
-			&o.TestName,
-			&o.TestCode,
-			&o.TestPrice,
-			&o.PanelName,
-			&o.PanelCode,
-			&o.PanelPrice,
+			&visitNo,
+			&ptFirstName,
+			&ptLastName,
+			&testName,
+			&testCode,
+			&testPrice,
+			&panelName,
+			&panelCode,
+			&panelPrice,
 			&status,
-			&o.Price,
-			&o.CollectorFirstName,
-			&o.CollectorLastName,
+			&price,
+			&collectorFirstName,
+			&collectorLastName,
 			&o.CollectedAt,
 		)
 
@@ -250,7 +264,45 @@ func (or *OrderRepository) ListOrders(ctx context.Context) ([]*domain.ListOrders
 			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
 
-		o.Status = domain.OrderStatus(status)
+		if visitNo.Valid {
+			o.VisitNo = visitNo.String
+		}
+		if ptFirstName.Valid {
+			o.PtFirstName = ptFirstName.String
+		}
+		if ptLastName.Valid {
+			o.PtLastName = ptLastName.String
+		}
+		if testName.Valid {
+			o.TestName = testName.String
+		}
+		if testCode.Valid {
+			o.TestCode = testCode.String
+		}
+		if testPrice.Valid {
+			o.TestPrice = testPrice.Float64
+		}
+		if panelName.Valid {
+			o.PanelName = panelName.String
+		}
+		if panelCode.Valid {
+			o.PanelCode = panelCode.String
+		}
+		if panelPrice.Valid {
+			o.PanelPrice = panelPrice.Float64
+		}
+		if status.Valid {
+			o.Status = domain.OrderStatus(status.String)
+		}
+		if price.Valid {
+			o.Price = price.Float64
+		}
+		if collectorFirstName.Valid {
+			o.CollectorFirstName = collectorFirstName.String
+		}
+		if collectorLastName.Valid {
+			o.CollectorLastName = collectorLastName.String
+		}
 
 		orders = append(orders, &o)
 	}
