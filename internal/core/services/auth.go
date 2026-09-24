@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
+	"log/slog"
 	"math/big"
 	"strings"
 	"time"
@@ -19,15 +20,17 @@ const otpLength = 6
 type AuthService struct {
 	repo     port.UserRepository
 	tr       port.TokenRepository
+	sessions port.SessionRepository
 	ts       port.TokenService
 	resetURL string
 	otpTTL   time.Duration
 }
 
-func NewAuthService(userRepo port.UserRepository, tokenRepo port.TokenRepository, tokenService port.TokenService, resetURL string, otpTTL time.Duration) *AuthService {
+func NewAuthService(userRepo port.UserRepository, tokenRepo port.TokenRepository, sessionRepo port.SessionRepository, tokenService port.TokenService, resetURL string, otpTTL time.Duration) *AuthService {
 	return &AuthService{
 		repo:     userRepo,
 		tr:       tokenRepo,
+		sessions: sessionRepo,
 		ts:       tokenService,
 		resetURL: resetURL,
 		otpTTL:   otpTTL,
@@ -64,10 +67,18 @@ func (as *AuthService) Login(ctx context.Context, details *domain.Login) (*domai
 	}, nil
 }
 
+const forgotPasswordGenericMessage = "If an account exists for that email, a password reset code has been sent."
+
+// ForgotPassword always returns the same generic response regardless of
+// whether the email exists, to avoid leaking which emails are registered.
+// The OTP itself is never returned over the API - it's logged server-side
+// (a stand-in for a real email/SMS delivery channel) so it never appears in
+// an HTTP response that an attacker could read.
 func (as *AuthService) ForgotPassword(ctx context.Context, req *domain.ForgotPasswordRequest) (*domain.ForgotPasswordResponse, error) {
 	user, err := as.repo.GetUserByEmail(ctx, &domain.Login{Email: req.Email})
 	if err != nil {
-		return nil, domain.ErrDataNotFound
+		slog.Info("forgot-password requested for unknown email", "email", req.Email)
+		return &domain.ForgotPasswordResponse{Message: forgotPasswordGenericMessage}, nil
 	}
 
 	otp, err := generateOTP(otpLength)
@@ -81,11 +92,21 @@ func (as *AuthService) ForgotPassword(ctx context.Context, req *domain.ForgotPas
 		return nil, err
 	}
 
-	return &domain.ForgotPasswordResponse{
-		OTP:       otp,
-		ExpiresAt: expiresAt,
-		ResetURL:  buildResetURL(as.resetURL, otp),
-	}, nil
+	slog.Info("password reset OTP generated",
+		"email", req.Email,
+		"otp", otp,
+		"expires_at", expiresAt,
+		"reset_url", buildResetURL(as.resetURL, otp),
+	)
+
+	return &domain.ForgotPasswordResponse{Message: forgotPasswordGenericMessage}, nil
+}
+
+// Logout revokes the given session so its access token is rejected by
+// authMiddleware on any future request, even though the JWT itself remains
+// cryptographically valid until it expires.
+func (as *AuthService) Logout(ctx context.Context, sessionID uuid.UUID) error {
+	return as.sessions.Revoke(ctx, sessionID)
 }
 
 func (as *AuthService) ResetPassword(ctx context.Context, req *domain.ResetPasswordRequest) error {

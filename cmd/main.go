@@ -69,7 +69,8 @@ func main() {
 
 	userRepo := repository.NewUserRepository(db)
 	tokenRepo := repository.NewTokensRepository(db)
-	authService := services.NewAuthService(userRepo, tokenRepo, tokenService, config.Reset.BaseURL, config.Reset.TTL)
+	sessionRepo := repository.NewSessionRepository(db)
+	authService := services.NewAuthService(userRepo, tokenRepo, sessionRepo, tokenService, config.Reset.BaseURL, config.Reset.TTL)
 	authHandler := http.NewAuthHandler(authService)
 	userService := services.NewUserService(userRepo, roleService, profileService)
 	userHandler := http.NewUsersHandler(userService)
@@ -109,6 +110,7 @@ func main() {
 	router, err := http.NewRouter(
 		config,
 		tokenService,
+		sessionRepo,
 		*roleHandler,
 		*userHandler,
 		*profileHandler,

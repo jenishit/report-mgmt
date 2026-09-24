@@ -29,6 +29,19 @@ func (m *mockTokenRepository) MarkUsed(ctx context.Context, id uuid.UUID) error 
 	return m.markUsedFn(ctx, id)
 }
 
+type mockSessionRepository struct {
+	revokeFn    func(ctx context.Context, sessionID uuid.UUID) error
+	isRevokedFn func(ctx context.Context, sessionID uuid.UUID) (bool, error)
+}
+
+func (m *mockSessionRepository) Revoke(ctx context.Context, sessionID uuid.UUID) error {
+	return m.revokeFn(ctx, sessionID)
+}
+
+func (m *mockSessionRepository) IsRevoked(ctx context.Context, sessionID uuid.UUID) (bool, error) {
+	return m.isRevokedFn(ctx, sessionID)
+}
+
 type mockTokenService struct {
 	createAccessTokenFn func(user *domain.BasicDetails, sessionID uuid.UUID) (string, error)
 	verifyAccessTokenFn func(token string) (*domain.TokenPayload, error)
@@ -68,7 +81,7 @@ func TestAuthService_Login_Success(t *testing.T) {
 		},
 	}
 
-	svc := NewAuthService(userRepo, &mockTokenRepository{}, tokenSvc, "", 0)
+	svc := NewAuthService(userRepo, &mockTokenRepository{}, &mockSessionRepository{}, tokenSvc, "", 0)
 
 	res, err := svc.Login(context.Background(), &domain.Login{Email: "user@example.com", Password: "correct-password"})
 	if err != nil {
@@ -101,7 +114,7 @@ func TestAuthService_Login_WrongPassword(t *testing.T) {
 		},
 	}
 
-	svc := NewAuthService(userRepo, &mockTokenRepository{}, tokenSvc, "", 0)
+	svc := NewAuthService(userRepo, &mockTokenRepository{}, &mockSessionRepository{}, tokenSvc, "", 0)
 
 	_, err := svc.Login(context.Background(), &domain.Login{Email: "user@example.com", Password: "wrong-password"})
 	if !errors.Is(err, domain.ErrInvalidCredentials) {
@@ -116,7 +129,7 @@ func TestAuthService_Login_UserNotFound(t *testing.T) {
 		},
 	}
 
-	svc := NewAuthService(userRepo, &mockTokenRepository{}, &mockTokenService{}, "", 0)
+	svc := NewAuthService(userRepo, &mockTokenRepository{}, &mockSessionRepository{}, &mockTokenService{}, "", 0)
 
 	_, err := svc.Login(context.Background(), &domain.Login{Email: "missing@example.com", Password: "whatever1"})
 	if !errors.Is(err, domain.ErrDataNotFound) {
@@ -124,6 +137,8 @@ func TestAuthService_Login_UserNotFound(t *testing.T) {
 	}
 }
 
+// ForgotPassword must never leak the OTP/reset link over the API, and must
+// respond identically whether or not the email exists (no user enumeration).
 func TestAuthService_ForgotPassword_Success(t *testing.T) {
 	userID := uuid.New()
 	userRepo := &mockUserRepository{
@@ -132,31 +147,32 @@ func TestAuthService_ForgotPassword_Success(t *testing.T) {
 		},
 	}
 	var storedOTP string
+	var otpCreated bool
 	tokenRepo := &mockTokenRepository{
 		createOTPFn: func(ctx context.Context, uid uuid.UUID, otp string, expiresAt time.Time) error {
 			if uid != userID {
 				t.Fatalf("expected user id %v, got %v", userID, uid)
 			}
 			storedOTP = otp
+			otpCreated = true
 			return nil
 		},
 	}
 
-	svc := NewAuthService(userRepo, tokenRepo, &mockTokenService{}, "http://app/reset?token={token}", 15*time.Minute)
+	svc := NewAuthService(userRepo, tokenRepo, &mockSessionRepository{}, &mockTokenService{}, "http://app/reset?token={token}", 15*time.Minute)
 
 	res, err := svc.ForgotPassword(context.Background(), &domain.ForgotPasswordRequest{Email: "user@example.com"})
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if len(res.OTP) != otpLength {
-		t.Fatalf("expected OTP of length %d, got %q", otpLength, res.OTP)
+	if !otpCreated {
+		t.Fatal("expected an OTP to be created for a known email")
 	}
-	if res.OTP != storedOTP {
-		t.Fatalf("expected returned OTP to match stored OTP")
+	if len(storedOTP) != otpLength {
+		t.Fatalf("expected OTP of length %d, got %q", otpLength, storedOTP)
 	}
-	wantURL := "http://app/reset?token=" + storedOTP
-	if res.ResetURL != wantURL {
-		t.Fatalf("expected reset url %q, got %q", wantURL, res.ResetURL)
+	if res.Message != forgotPasswordGenericMessage {
+		t.Fatalf("expected generic message %q, got %q", forgotPasswordGenericMessage, res.Message)
 	}
 }
 
@@ -166,12 +182,21 @@ func TestAuthService_ForgotPassword_UnknownEmail(t *testing.T) {
 			return nil, errors.New("no rows")
 		},
 	}
+	tokenRepo := &mockTokenRepository{
+		createOTPFn: func(ctx context.Context, uid uuid.UUID, otp string, expiresAt time.Time) error {
+			t.Fatal("CreateOTP should not be called for an unknown email")
+			return nil
+		},
+	}
 
-	svc := NewAuthService(userRepo, &mockTokenRepository{}, &mockTokenService{}, "", 0)
+	svc := NewAuthService(userRepo, tokenRepo, &mockSessionRepository{}, &mockTokenService{}, "", 0)
 
-	_, err := svc.ForgotPassword(context.Background(), &domain.ForgotPasswordRequest{Email: "missing@example.com"})
-	if !errors.Is(err, domain.ErrDataNotFound) {
-		t.Fatalf("expected ErrDataNotFound, got %v", err)
+	res, err := svc.ForgotPassword(context.Background(), &domain.ForgotPasswordRequest{Email: "missing@example.com"})
+	if err != nil {
+		t.Fatalf("expected no error for an unknown email (avoid leaking existence), got %v", err)
+	}
+	if res.Message != forgotPasswordGenericMessage {
+		t.Fatalf("expected generic message %q, got %q", forgotPasswordGenericMessage, res.Message)
 	}
 }
 
@@ -198,7 +223,7 @@ func TestAuthService_ResetPassword_Success(t *testing.T) {
 		},
 	}
 
-	svc := NewAuthService(userRepo, tokenRepo, &mockTokenService{}, "", 0)
+	svc := NewAuthService(userRepo, tokenRepo, &mockSessionRepository{}, &mockTokenService{}, "", 0)
 
 	err := svc.ResetPassword(context.Background(), &domain.ResetPasswordRequest{
 		Email:       "user@example.com",
@@ -220,7 +245,7 @@ func TestAuthService_ResetPassword_InvalidOTP(t *testing.T) {
 		},
 	}
 
-	svc := NewAuthService(&mockUserRepository{}, tokenRepo, &mockTokenService{}, "", 0)
+	svc := NewAuthService(&mockUserRepository{}, tokenRepo, &mockSessionRepository{}, &mockTokenService{}, "", 0)
 
 	err := svc.ResetPassword(context.Background(), &domain.ResetPasswordRequest{
 		Email:       "user@example.com",
@@ -229,5 +254,40 @@ func TestAuthService_ResetPassword_InvalidOTP(t *testing.T) {
 	})
 	if !errors.Is(err, domain.ErrInvalidOTP) {
 		t.Fatalf("expected ErrInvalidOTP, got %v", err)
+	}
+}
+
+func TestAuthService_Logout_RevokesSession(t *testing.T) {
+	sessionID := uuid.New()
+	var revoked uuid.UUID
+	sessionRepo := &mockSessionRepository{
+		revokeFn: func(ctx context.Context, sid uuid.UUID) error {
+			revoked = sid
+			return nil
+		},
+	}
+
+	svc := NewAuthService(&mockUserRepository{}, &mockTokenRepository{}, sessionRepo, &mockTokenService{}, "", 0)
+
+	if err := svc.Logout(context.Background(), sessionID); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if revoked != sessionID {
+		t.Fatalf("expected session %v to be revoked, got %v", sessionID, revoked)
+	}
+}
+
+func TestAuthService_Logout_PropagatesRepoError(t *testing.T) {
+	repoErr := errors.New("db unavailable")
+	sessionRepo := &mockSessionRepository{
+		revokeFn: func(ctx context.Context, sid uuid.UUID) error {
+			return repoErr
+		},
+	}
+
+	svc := NewAuthService(&mockUserRepository{}, &mockTokenRepository{}, sessionRepo, &mockTokenService{}, "", 0)
+
+	if err := svc.Logout(context.Background(), uuid.New()); !errors.Is(err, repoErr) {
+		t.Fatalf("expected %v, got %v", repoErr, err)
 	}
 }

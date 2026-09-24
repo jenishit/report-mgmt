@@ -96,3 +96,29 @@ func (h *AuthHandler) ResetPassword(ctx *gin.Context) {
 
 	handleSuccess(ctx, nil)
 }
+
+// Logout revokes the caller's current session so its access token can no
+// longer be used, even before it expires.
+// @Summary Logout
+// @Description Revoke the current session's access token
+// @Tags Auth
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} response
+// @Failure 401 {object} errorResponse
+// @Router /auth/logout [post]
+func (h *AuthHandler) Logout(ctx *gin.Context) {
+	userPayload, err := currentUserPayload(ctx)
+	if err != nil {
+		validationError(ctx, err)
+		return
+	}
+
+	if err := h.authService.Logout(ctx, userPayload.SessionID); err != nil {
+		handleError(ctx, err)
+		return
+	}
+
+	handleSuccess(ctx, "logged out successfully")
+}

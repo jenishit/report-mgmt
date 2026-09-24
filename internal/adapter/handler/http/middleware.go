@@ -150,7 +150,7 @@ func CORSMiddleware(allowedOrigins string) gin.HandlerFunc {
 		c.Next()
 	}
 }
-func authMiddleware(token port.TokenService) gin.HandlerFunc {
+func authMiddleware(token port.TokenService, sessions port.SessionRepository) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
 		authorizationHeader := ctx.GetHeader(authorizationHeaderKey)
@@ -186,6 +186,17 @@ func authMiddleware(token port.TokenService) gin.HandlerFunc {
 			return
 
 		}
+
+		revoked, err := sessions.IsRevoked(ctx, payload.SessionID)
+		if err != nil {
+			handleAbort(ctx, domain.ErrInternal)
+			return
+		}
+		if revoked {
+			handleAbort(ctx, domain.ErrInvalidToken)
+			return
+		}
+
 		ctx.Set(authorizationPayloadKey, payload)
 		ctx.Next()
 

@@ -1,9 +1,12 @@
 package http
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"golang.org/x/time/rate"
 
 	_ "github.com/jenish-brainztechs/go-backend/docs"
 	"github.com/jenish-brainztechs/go-backend/internal/adapter/config"
@@ -17,6 +20,7 @@ type Router struct {
 func NewRouter(
 	config *config.Container,
 	token port.TokenService,
+	sessions port.SessionRepository,
 	roleHandler RoleHandler,
 	userHandler UserHandler,
 	profileHandler ProfileHandler,
@@ -53,21 +57,28 @@ func NewRouter(
 
 	api := router.Group("/api")
 
-	auth := api.Group("/auth")
+	authMW := authMiddleware(token, sessions)
+
+	// Auth endpoints are rate-limited per client IP to slow down credential
+	// stuffing / brute-force and OTP-guessing attempts.
+	authRateLimit := rateLimitMiddleware(rate.Every(6*time.Second), 5)
+
+	auth := api.Group("/auth").Use(authRateLimit)
 	{
 		auth.POST("/login", authHandler.Login)
 		auth.POST("/forgot-password", authHandler.ForgotPassword)
 		auth.POST("/reset-password", authHandler.ResetPassword)
+		auth.POST("/logout", authMW, authHandler.Logout)
 	}
 
-	profile := api.Group("/profile").Use(authMiddleware(token))
+	profile := api.Group("/profile").Use(authMW)
 	{
 		profile.GET("/getme", profileHandler.GetProfileByID)
 		profile.PATCH("/update-profile/:id", profileHandler.UpdateProfileByUserID)
 	}
 
 	admin := api.Group("/admin")
-	admin.Use(authMiddleware(token), adminMiddleware())
+	admin.Use(authMW, adminMiddleware())
 
 	user := admin.Group("/user")
 	{
@@ -79,7 +90,7 @@ func NewRouter(
 		role.POST("/create", roleHandler.CreateRole)
 	}
 
-	profiles := admin.Group("/profile").Use(authMiddleware(token))
+	profiles := admin.Group("/profile").Use(authMW)
 	{
 		profiles.GET("/getme", profileHandler.GetProfileByID)
 		profiles.GET("/profile-details", profileHandler.GetProfiles)
@@ -108,12 +119,12 @@ func NewRouter(
 		labTests.PATCH("/update-reference", labTestsHandler.UpdateReferenceRange)
 	}
 
-	lab := api.Group("/lab").Use(authMiddleware(token))
+	lab := api.Group("/lab").Use(authMW)
 	{
 		lab.GET("/get/:id", labHandler.GetLabByID)
 	}
 
-	labTest := api.Group("/lab-test").Use(authMiddleware(token))
+	labTest := api.Group("/lab-test").Use(authMW)
 	{
 
 		labTest.GET("/list-department", labTestsHandler.GetDepartments)
@@ -131,13 +142,13 @@ func NewRouter(
 		doc.PATCH("/:id", docHandler.UpdateDoctor)
 	}
 
-	doctor := api.Group("/doctor").Use(authMiddleware(token))
+	doctor := api.Group("/doctor").Use(authMW)
 	{
 		doctor.GET("/:id", docHandler.GetDoctorByID)
 		doctor.GET("", docHandler.GetDoctors)
 	}
 
-	pt := api.Group("/patient").Use(authMiddleware(token))
+	pt := api.Group("/patient").Use(authMW)
 	{
 		pt.POST("", ptHandler.CreatePatient)
 		pt.GET("/:id", ptHandler.GetPatientByID)
@@ -145,7 +156,7 @@ func NewRouter(
 		pt.PATCH("/:id", ptHandler.UpdatePatient)
 	}
 
-	visit := api.Group("/visit").Use(authMiddleware(token))
+	visit := api.Group("/visit").Use(authMW)
 	{
 		visit.POST("", visitHandler.CreateVisit)
 		visit.GET("", visitHandler.GetVisits)
@@ -154,7 +165,7 @@ func NewRouter(
 		visit.GET("/patient/:id", visitHandler.GetVisitByPatientID)
 	}
 
-	order := api.Group("/order").Use(authMiddleware(token))
+	order := api.Group("/order").Use(authMW)
 	{
 		order.POST("", orderHandler.CreateOrder)
 		order.GET("/:id", orderHandler.GetOrderByID)
@@ -163,7 +174,7 @@ func NewRouter(
 		order.GET("/list", orderHandler.ListOrders)
 	}
 
-	result := api.Group("/result").Use(authMiddleware(token))
+	result := api.Group("/result").Use(authMW)
 	{
 		result.POST("", resultHandler.CreateResult)
 		result.GET("/:id", resultHandler.GetResultByID)
@@ -171,7 +182,7 @@ func NewRouter(
 		result.GET("/order/:order_id", resultHandler.GetResultsByOrderID)
 	}
 
-	report := api.Group("/report").Use(authMiddleware(token))
+	report := api.Group("/report").Use(authMW)
 	{
 		report.POST("", reportHandler.CreateReport)
 		report.GET("/:id", reportHandler.GetReportByID)
