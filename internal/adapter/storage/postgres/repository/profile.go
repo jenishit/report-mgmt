@@ -104,7 +104,7 @@ func (p *ProfileRepository) GetProfileByID(ctx context.Context, id uuid.UUID) (*
 		profile.Email = email.String
 	}
 	if phone.Valid {
-		profile.Phone = &phone.String
+		profile.Phone = phone.String
 	}
 
 	return &profile, nil
@@ -125,7 +125,10 @@ func (pr *ProfileRepository) GetProfiles(ctx context.Context) ([]*domain.GetProf
 		).From("PROFILE P").
 		LeftJoin("USERS U ON U.ID = P.USER_ID").
 		LeftJoin("ROLE R ON R.ID = U.ROLE_ID").
-		PlaceholderFormat(sq.Dollar).ToSql()
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+
+	fmt.Println(query)
 
 	rows, err := pr.DB.Query(ctx, query, args...)
 	if err != nil {
@@ -157,7 +160,7 @@ func (pr *ProfileRepository) GetProfiles(ctx context.Context) ([]*domain.GetProf
 			c.Email = email.String
 		}
 		if phone.Valid {
-			c.Phone = &phone.String
+			c.Phone = phone.String
 		}
 
 		profiles = append(profiles, &c)
@@ -178,11 +181,12 @@ func (pr *ProfileRepository) UpdateProfileByUserID(ctx context.Context, prof *do
 		builder = builder.Set("last_name", prof.LastName)
 	}
 
-	if prof.Phone != nil {
+	if prof.Phone != "" {
 		builder = builder.Set("phone", prof.Phone)
 	}
 
 	query, args, err := builder.ToSql()
+	
 	if err != nil {
 		return fmt.Errorf("failed to build SQL query: %w", err)
 	}

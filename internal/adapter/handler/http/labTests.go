@@ -1,6 +1,7 @@
 package http
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -75,14 +76,19 @@ func (lth *LabTestsHandler) CreatePanel(ctx *gin.Context) {
 		return
 	}
 
-	panel := &domain.Panels{
+	p := &domain.Panels{
 		Name:         req.Name,
 		DepartmentID: req.DepartmentID,
 		Code:         &req.Code,
 		PanelPrice:   &req.PanelPrice,
 	}
 
-	panel, err := lth.svc.CreatePanel(ctx, panel)
+	p, err := lth.svc.CreatePanel(ctx, p)
+
+	panel := &dto.CreatePanelRes{
+		ID:   p.ID,
+		Name: p.Name,
+	}
 
 	if err != nil {
 		handleError(ctx, err)
@@ -526,8 +532,7 @@ func (lth *LabTestsHandler) UpdatePanel(ctx *gin.Context) {
 // @Failure 401 {object} errorResponse
 // @Router /admin/lab-test/update-catalog [patch]
 func (lth *LabTestsHandler) UpdateTestCatalog(ctx *gin.Context) {
-	var req dto.TestCatalogRequest
-	now := time.Now()
+	var req dto.UpdateTestCatalogRequest
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		validationError(ctx, err)
@@ -535,13 +540,13 @@ func (lth *LabTestsHandler) UpdateTestCatalog(ctx *gin.Context) {
 	}
 
 	catalog := &domain.TestCatalog{
-		DepartmentID:   req.DepartmentID,
-		Name:           req.Name,
-		Code:           &req.Code,
-		SampleType:     &req.SampleType,
-		TestPrice:      &req.TestPrice,
-		TurnAroundTime: &req.TurnaroundTime,
-		UpdatedAt:      now,
+		ID:             req.ID,
+		DepartmentID:   *req.DepartmentID,
+		Name:           *req.Name,
+		Code:           req.Code,
+		SampleType:     req.SampleType,
+		TestPrice:      req.TestPrice,
+		TurnAroundTime: req.TurnaroundTime,
 	}
 
 	err := lth.svc.UpdateTestCatalog(ctx, catalog)
@@ -568,6 +573,7 @@ func (lth *LabTestsHandler) UpdateTestCatalog(ctx *gin.Context) {
 // @Router /admin/lab-test/update-test-parameter [patch]
 func (lth *LabTestsHandler) UpdateTestParameter(ctx *gin.Context) {
 	var req dto.TestParameterRequest
+
 	now := time.Now()
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
@@ -576,6 +582,7 @@ func (lth *LabTestsHandler) UpdateTestParameter(ctx *gin.Context) {
 	}
 
 	parameter := &domain.TestParameter{
+		ID: req.ID,
 		TestCatalogID: req.TestID,
 		Name:          req.Name,
 		Unit:          req.Unit,
@@ -583,7 +590,7 @@ func (lth *LabTestsHandler) UpdateTestParameter(ctx *gin.Context) {
 		SequenceNo:    req.SequenceNo,
 		UpdatedAt:     now,
 	}
-
+	fmt.Println(parameter)
 	err := lth.svc.UpdateTestParameter(ctx, parameter)
 
 	if err != nil {
@@ -616,6 +623,7 @@ func (lth *LabTestsHandler) UpdateReferenceRange(ctx *gin.Context) {
 	}
 
 	ref := &domain.ReferenceRange{
+		ID: req.ID,
 		TestParameterID: req.ParameterID,
 		Gender:          req.Gender,
 		MinAge:          &req.MinAge,
@@ -634,4 +642,38 @@ func (lth *LabTestsHandler) UpdateReferenceRange(ctx *gin.Context) {
 	}
 
 	handleSuccess(ctx, gin.H{"message": "Reference range is updated"})
+}
+
+// GetTestCatalogByPanelID returns test catalogs grouped by panel
+// @Summary List test catalogs by panel
+// @Description Get all test catalogs for a given panel, grouped under panel info
+// @Tags Lab Tests
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param id path string true "Panel ID"
+// @Success 200 {object} response{data=dto.TestCatalogByPanelID}
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Router /lab-test/list-catalog-by-panel/{id} [get]
+func (lth *LabTestsHandler) GetTestCatalogByPanelID(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	uid, err := uuid.Parse(id)
+
+	if err != nil {
+		parseError(err)
+		return
+	}
+
+	res, err := lth.svc.GetTestCatalogByPanelID(ctx, uid)
+
+	if err != nil {
+		handleError(ctx, err)
+		return
+	}
+
+	rsp := dto.GetTestCatalogByPanelID(res)
+
+	handleSuccess(ctx, rsp)
 }

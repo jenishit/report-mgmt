@@ -68,7 +68,8 @@ func main() {
 	profileHandler := http.NewProfileHandler(profileService)
 
 	userRepo := repository.NewUserRepository(db)
-	authService := services.NewAuthService(userRepo, tokenService)
+	tokenRepo := repository.NewTokensRepository(db)
+	authService := services.NewAuthService(userRepo, tokenRepo, tokenService, config.Reset.BaseURL, config.Reset.TTL)
 	authHandler := http.NewAuthHandler(authService)
 	userService := services.NewUserService(userRepo, roleService, profileService)
 	userHandler := http.NewUsersHandler(userService)

@@ -15,7 +15,33 @@ const (
 	authorizationType       = "Bearer"
 	authorizationPayloadKey = "authorization_payload"
 	sessionContextKey       = "session_state"
+
+	// RoleSuperAdmin is the single account allowed to create other admins.
+	RoleSuperAdmin = "ROLE_SUPER_ADMIN"
+	// RoleAdmin can create roles and non-admin users, but not other admins.
+	RoleAdmin = "ROLE_ADMIN"
 )
+
+// currentUserPayload extracts the authenticated caller's token payload from
+// the gin context. authMiddleware must have run first.
+func currentUserPayload(ctx *gin.Context) (*domain.TokenPayload, error) {
+	payload, exists := ctx.Get(authorizationPayloadKey)
+	if !exists {
+		return nil, domain.ErrEmptyAuthorizationHeader
+	}
+
+	userPayload, ok := payload.(*domain.TokenPayload)
+	if !ok {
+		return nil, domain.ErrInvalidAuthorizationHeader
+	}
+
+	return userPayload, nil
+}
+
+// isAdminRole reports whether roleName has admin-or-above privileges.
+func isAdminRole(roleName string) bool {
+	return roleName == RoleAdmin || roleName == RoleSuperAdmin
+}
 
 func CORSMiddleware(allowedOrigins string) gin.HandlerFunc {
 	originMap := map[string]bool{}
@@ -168,19 +194,13 @@ func authMiddleware(token port.TokenService) gin.HandlerFunc {
 
 func adminMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		payload, exists := ctx.Get(authorizationPayloadKey)
-		if !exists {
-			validationError(ctx, domain.ErrEmptyAuthorizationHeader)
+		userPayload, err := currentUserPayload(ctx)
+		if err != nil {
+			validationError(ctx, err)
 			return
 		}
 
-		userPayload, ok := payload.(*domain.TokenPayload)
-		if !ok {
-			validationError(ctx, domain.ErrInvalidAuthorizationHeader)
-			return
-		}
-
-		if userPayload.RoleName != "ROLE_ADMIN" {
+		if !isAdminRole(userPayload.RoleName) {
 			handleAbort(ctx, domain.ErrUnauthorized)
 			return
 

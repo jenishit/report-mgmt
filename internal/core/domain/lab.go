@@ -9,12 +9,12 @@ import (
 type LabSettings struct {
 	ID             uuid.UUID
 	LabName        string
-	Tagline        *string
-	Address        *string
-	Phone          *string
-	Email          *string
-	RegistrationNo *string
-	ReportFooter   *string
+	Tagline        string
+	Address        string
+	Phone          string
+	Email          string
+	RegistrationNo string
+	ReportFooter   string
 	UpdatedAt      time.Time
 	UpdatedBy      uuid.UUID
 }

@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"time"
 
 	sq "github.com/Masterminds/squirrel"
 	"github.com/google/uuid"
@@ -114,6 +115,8 @@ func (pr *PatientRepository) GetPatientByID(ctx context.Context, id uuid.UUID) (
 }
 
 func (pr *PatientRepository) GetPatients(ctx context.Context) ([]*domain.Patient, error) {
+	var dob time.Time
+
 	query, args, err := sq.
 		Select(
 			"id",
@@ -151,11 +154,15 @@ func (pr *PatientRepository) GetPatients(ctx context.Context) ([]*domain.Patient
 			&pt.Phone,
 			&pt.Email,
 			&pt.MRN,
-			&pt.DOB,
+			&dob,
 			&pt.Gender,
 			&pt.Address,
 			&pt.CreatedAt,
 		)
+
+		date := dob.Format("2006-01-02")
+
+		pt.DOB = date
 
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan row: %w", err)
@@ -196,8 +203,7 @@ func (pr *PatientRepository) UpdatePatient(ctx context.Context, pt *domain.Patie
 		builder = builder.Set("mrn", pt.MRN)
 	}
 
-
-	if !pt.DOB.IsZero() {
+	if pt.DOB != "" {
 		builder = builder.Set("dob", pt.DOB)
 	}
 

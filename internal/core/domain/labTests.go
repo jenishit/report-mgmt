@@ -64,3 +64,15 @@ type ReferenceRange struct {
 	TextValue       *string
 	UpdatedAt       time.Time
 }
+
+type CategoryByPanelID struct {
+	PanelID    uuid.UUID
+	PanelName  string
+	PanelPrice float64
+	PanelCode  string
+
+	TestID           uuid.UUID
+	TestCatalogName  string
+	TestCatalogCode  string
+	TestCatalogPrice float64
+}

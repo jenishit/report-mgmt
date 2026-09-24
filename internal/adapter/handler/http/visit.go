@@ -135,6 +135,30 @@ func (vh *VisitHandler) GetVisitByPatientID(ctx *gin.Context) {
 	handleSuccess(ctx, rsp)
 }
 
+// GetVisits returns all visits
+// @Summary List all visits
+// @Description Get all visits with patient and doctor details
+// @Tags Visits
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} response{data=[]dto.ListVisits}
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
+// @Router /visit [get]
+func (vh *VisitHandler) GetVisits(ctx *gin.Context) {
+	res, err := vh.svc.GetVisits(ctx)
+
+	if err != nil {
+		handleError(ctx, err)
+		return
+	}
+
+	rsp := dto.VisitsResponse(res)
+
+	handleSuccess(ctx, rsp)
+}
+
 // UpdateVisitByID updates a visit
 // @Summary Update visit
 // @Description Update an existing visit
@@ -170,7 +194,6 @@ func (vh *VisitHandler) UpdateVisitByID(ctx *gin.Context) {
 		PatientID: req.PatientID,
 		DoctorID:  req.DoctorID,
 		Status:    domain.Status(req.Status),
-		IsDeleted: req.IsDeleted,
 	}
 
 	err = vh.svc.UpdateVisitByID(ctx, vis)

@@ -53,12 +53,12 @@ func (sh *LabHandler) InsertLab(ctx *gin.Context) {
 
 	lab := &domain.LabSettings{
 		LabName:        req.LabName,
-		Tagline:        &req.Tagline,
-		Address:        &req.Address,
-		Phone:          &req.Phone,
-		Email:          &req.Email,
-		RegistrationNo: &req.RegistrationNo,
-		ReportFooter:   &req.ReportFooter,
+		Tagline:        req.Tagline,
+		Address:        req.Address,
+		Phone:          req.Phone,
+		Email:          req.Email,
+		RegistrationNo: req.RegistrationNo,
+		ReportFooter:   req.ReportFooter,
 		UpdatedBy:      userPayload.UserId,
 	}
 
@@ -144,12 +144,12 @@ func (sh *LabHandler) UpdateLab(ctx *gin.Context) {
 	lab := &domain.LabSettings{
 		ID:             labUUID,
 		LabName:        req.LabName,
-		Tagline:        &req.Tagline,
-		Address:        &req.Address,
-		Phone:          &req.Phone,
-		Email:          &req.Email,
-		RegistrationNo: &req.RegistrationNo,
-		ReportFooter:   &req.ReportFooter,
+		Tagline:        req.Tagline,
+		Address:        req.Address,
+		Phone:          req.Phone,
+		Email:          req.Email,
+		RegistrationNo: req.RegistrationNo,
+		ReportFooter:   req.ReportFooter,
 		UpdatedBy:      userPayload.UserId,
 	}
 

@@ -222,6 +222,33 @@ definitions:
       updated_by:
         type: string
     type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ListOrders:
+    properties:
+      collected_by:
+        type: string
+      id:
+        type: string
+      panel_code:
+        type: string
+      panel_name:
+        type: string
+      panel_price:
+        type: number
+      patinet_name:
+        type: string
+      price:
+        type: number
+      status:
+        $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.OrderStatus'
+      test_code:
+        type: string
+      test_name:
+        type: string
+      test_price:
+        type: number
+      visit_no:
+        type: integer
+    type: object
   github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ListVisits:
     properties:
       doctor_name:
@@ -453,6 +480,32 @@ definitions:
       verified_by:
         type: string
     type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestCatalogByPanelID:
+    properties:
+      panel_code:
+        type: string
+      panel_id:
+        type: string
+      panel_name:
+        type: string
+      panel_price:
+        type: number
+      test_catalog_items:
+        items:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestCatalogItem'
+        type: array
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestCatalogItem:
+    properties:
+      test_catalog_code:
+        type: string
+      test_catalog_id:
+        type: string
+      test_catalog_name:
+        type: string
+      test_catalog_price:
+        type: number
+    type: object
   github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestCatalogRequest:
     properties:
       dept_id:
@@ -632,6 +685,22 @@ definitions:
     - High
     - Critical
     - NA
+  github_com_jenish-brainztechs_go-backend_internal_core_domain.ForgotPasswordRequest:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
+  github_com_jenish-brainztechs_go-backend_internal_core_domain.ForgotPasswordResponse:
+    properties:
+      expires_at:
+        type: string
+      otp:
+        type: string
+      reset_url:
+        type: string
+    type: object
   github_com_jenish-brainztechs_go-backend_internal_core_domain.Gender:
     enum:
     - M
@@ -751,6 +820,19 @@ definitions:
     - ReportDraft
     - ReportFinal
     - ReportAmended
+  github_com_jenish-brainztechs_go-backend_internal_core_domain.ResetPasswordRequest:
+    properties:
+      email:
+        type: string
+      new_password:
+        type: string
+      otp:
+        type: string
+    required:
+    - email
+    - new_password
+    - otp
+    type: object
   github_com_jenish-brainztechs_go-backend_internal_core_domain.Role:
     properties:
       id:
@@ -1433,11 +1515,46 @@ paths:
       summary: List all profiles
       tags:
       - Profile
+  /auth/forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: Request a password reset OTP for an email
+      parameters:
+      - description: Email to reset password for
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.ForgotPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.ForgotPasswordResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      summary: Forgot Password
+      tags:
+      - Auth
   /auth/login:
     post:
       consumes:
       - application/json
-      description: Authenticate user with email and password
+      description: Authenticate a user with email and password
       parameters:
       - description: Login credentials
         in: body
@@ -1465,7 +1582,37 @@ paths:
           description: Unauthorized
           schema:
             $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
       summary: Login
+      tags:
+      - Auth
+  /auth/reset-password:
+    post:
+      consumes:
+      - application/json
+      description: Reset the password using email and the OTP
+      parameters:
+      - description: Email, OTP and new password
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_core_domain.ResetPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      summary: Reset Password
       tags:
       - Auth
   /doctor:
@@ -1536,6 +1683,42 @@ paths:
       summary: Get doctor by ID
       tags:
       - Doctors
+  /lab-test/list-catalog-by-panel/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get all test catalogs for a given panel, grouped under panel info
+      parameters:
+      - description: Panel ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.TestCatalogByPanelID'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: List test catalogs by panel
+      tags:
+      - Lab Tests
   /lab-test/list-catalog/{id}:
     get:
       consumes:
@@ -1909,6 +2092,38 @@ paths:
       security:
       - BearerAuth: []
       summary: Update order
+      tags:
+      - Orders
+  /order/list:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all orders
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ListOrders'
+                  type: array
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: List orders
       tags:
       - Orders
   /order/visit/{visit_id}:
@@ -2618,6 +2833,37 @@ paths:
       tags:
       - Users
   /visit:
+    get:
+      consumes:
+      - application/json
+      description: Get all visits with patient and doctor details
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/internal_adapter_handler_http.response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_jenish-brainztechs_go-backend_internal_adapter_handler_http_dto.ListVisits'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_adapter_handler_http.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: List all visits
+      tags:
+      - Visits
     post:
       consumes:
       - application/json

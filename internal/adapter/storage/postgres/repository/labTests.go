@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -603,8 +604,6 @@ func (lr *LabTestsRepository) UpdatePanel(ctx context.Context, panel *domain.Pan
 }
 
 func (lr *LabTestsRepository) UpdateTestCatalog(ctx context.Context, test *domain.TestCatalog) error {
-	now := time.Now()
-
 	builder := sq.
 		Update("test_catalog").
 		PlaceholderFormat(sq.Dollar).
@@ -626,9 +625,11 @@ func (lr *LabTestsRepository) UpdateTestCatalog(ctx context.Context, test *domai
 		builder = builder.Set("turnaround_hours", test.TurnAroundTime)
 	}
 
-	builder = builder.Set("updated_at", now)
+	builder = builder.Set("updated_at", time.Now())
 
 	query, args, err := builder.ToSql()
+	fmt.Println(query)
+	fmt.Println(args)
 	if err != nil {
 		return fmt.Errorf("failed to build SQL query: %w", err)
 	}
@@ -717,4 +718,76 @@ func (lr *LabTestsRepository) UpdateReferenceRange(ctx context.Context, rangeDat
 	}
 
 	return nil
+}
+
+func (lr *LabTestsRepository) GetTestCatalogByPanelID(ctx context.Context, id uuid.UUID) ([]*domain.CategoryByPanelID, error) {
+	query, args, err := sq.
+		Select(
+			"P.ID",
+			"P.NAME",
+			"P.CODE",
+			"P.PANEL_PRICE",
+			"T.ID",
+			"T.NAME",
+			"T.CODE",
+			"T.PRICE",
+		).
+		From("PANELS P").
+		LeftJoin("PANEL_COMPONENTS PC ON P.ID = PC.PANEL_ID").
+		LeftJoin("TEST_CATALOG T ON PC.TEST_ID = T.ID").
+		Where(sq.Eq{"P.ID": id}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+
+	rows, err := lr.DB.Query(ctx, query, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var pts []*domain.CategoryByPanelID
+
+	for rows.Next() {
+		var (
+			pt        domain.CategoryByPanelID
+			testID    uuid.NullUUID
+			testName  sql.NullString
+			testCode  sql.NullString
+			testPrice sql.NullFloat64
+		)
+
+		err := rows.Scan(
+			&pt.PanelID,
+			&pt.PanelName,
+			&pt.PanelCode,
+			&pt.PanelPrice,
+			&testID,
+			&testName,
+			&testCode,
+			&testPrice,
+		)
+
+		if err != nil {
+			return nil, fmt.Errorf("Failed to scan row: %w", err)
+		}
+
+		if testID.Valid {
+			pt.TestID = testID.UUID
+		}
+		if testName.Valid {
+			pt.TestCatalogName = testName.String
+		}
+		if testCode.Valid {
+			pt.TestCatalogCode = testCode.String
+		}
+		if testPrice.Valid {
+			pt.TestCatalogPrice = testPrice.Float64
+		}
+
+		pts = append(pts, &pt)
+
+	}
+
+	return pts, nil
 }

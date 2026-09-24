@@ -36,6 +36,18 @@ func (rh *RoleHandler) CreateRole(ctx *gin.Context) {
 		return
 	}
 
+	if req.RoleName == RoleAdmin || req.RoleName == RoleSuperAdmin {
+		userPayload, err := currentUserPayload(ctx)
+		if err != nil {
+			validationError(ctx, err)
+			return
+		}
+		if userPayload.RoleName != RoleSuperAdmin {
+			handleError(ctx, domain.ErrForbidden)
+			return
+		}
+	}
+
 	role := &domain.Role{
 		RoleName: req.RoleName,
 	}

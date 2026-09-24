@@ -186,3 +186,126 @@ func (or *OrderRepository) UpdateOrder(ctx context.Context, order *domain.Order)
 
 	return nil
 }
+
+func (or *OrderRepository) ListOrders(ctx context.Context) ([]*domain.ListOrders, error) {
+	var (
+		visitNo            sql.NullString
+		ptFirstName        sql.NullString
+		ptLastName         sql.NullString
+		testName           sql.NullString
+		testCode           sql.NullString
+		testPrice          sql.NullFloat64
+		panelName          sql.NullString
+		panelCode          sql.NullString
+		panelPrice         sql.NullFloat64
+		status             sql.NullString
+		price              sql.NullFloat64
+		collectorFirstName sql.NullString
+		collectorLastName  sql.NullString
+	)
+
+	query := `
+		SELECT
+		O.ID,
+		V.VISIT_NO,
+		P.FIRST_NAME,
+		P.LAST_NAME,
+		TC.NAME,
+		TC.CODE,
+		TC.PRICE,
+		PC.NAME,
+		PC.CODE,
+		PC.PANEL_PRICE,
+		O.STATUS,
+		O.PRICE,
+		PR.FIRST_NAME,
+		PR.LAST_NAME,
+		O.COLLECTED_AT
+	FROM
+		ORDER_ITEM O
+		LEFT JOIN VISITS V ON O.VISIT_ID = V.ID
+		LEFT JOIN PATIENTS P ON V.PATIENT_ID = P.ID
+		LEFT JOIN TEST_CATALOG TC ON O.TEST_ID = TC.ID
+		LEFT JOIN PANELS PC ON O.PANEL_ID = PC.ID
+		LEFT JOIN USERS U ON O.COLLECTED_BY = U.ID
+		LEFT JOIN PROFILE PR ON U.ID = PR.USER_ID
+	`
+
+	rows, err := or.DB.Query(ctx, query)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var orders []*domain.ListOrders
+
+	for rows.Next() {
+		var o domain.ListOrders
+
+		err := rows.Scan(
+			&o.ID,
+			&visitNo,
+			&ptFirstName,
+			&ptLastName,
+			&testName,
+			&testCode,
+			&testPrice,
+			&panelName,
+			&panelCode,
+			&panelPrice,
+			&status,
+			&price,
+			&collectorFirstName,
+			&collectorLastName,
+			&o.CollectedAt,
+		)
+
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan row: %w", err)
+		}
+
+		if visitNo.Valid {
+			o.VisitNo = visitNo.String
+		}
+		if ptFirstName.Valid {
+			o.PtFirstName = ptFirstName.String
+		}
+		if ptLastName.Valid {
+			o.PtLastName = ptLastName.String
+		}
+		if testName.Valid {
+			o.TestName = testName.String
+		}
+		if testCode.Valid {
+			o.TestCode = testCode.String
+		}
+		if testPrice.Valid {
+			o.TestPrice = testPrice.Float64
+		}
+		if panelName.Valid {
+			o.PanelName = panelName.String
+		}
+		if panelCode.Valid {
+			o.PanelCode = panelCode.String
+		}
+		if panelPrice.Valid {
+			o.PanelPrice = panelPrice.Float64
+		}
+		if status.Valid {
+			o.Status = domain.OrderStatus(status.String)
+		}
+		if price.Valid {
+			o.Price = price.Float64
+		}
+		if collectorFirstName.Valid {
+			o.CollectorFirstName = collectorFirstName.String
+		}
+		if collectorLastName.Valid {
+			o.CollectorLastName = collectorLastName.String
+		}
+
+		orders = append(orders, &o)
+	}
+
+	return orders, nil
+}

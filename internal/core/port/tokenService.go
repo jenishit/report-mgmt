@@ -14,5 +14,6 @@ type TokenService interface {
 
 type AuthService interface {
 	Login(ctx context.Context, details *domain.Login) (*domain.LoginResponse, error)
-
+	ForgotPassword(ctx context.Context, req *domain.ForgotPasswordRequest) (*domain.ForgotPasswordResponse, error)
+	ResetPassword(ctx context.Context, req *domain.ResetPasswordRequest) error
 }

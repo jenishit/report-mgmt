@@ -16,6 +16,7 @@ type (
 		App     *App
 		Token   *Token
 		Refresh *Refresh
+		Reset   *Reset
 
 		Session *Session
 		DB      *DB
@@ -52,6 +53,11 @@ type (
 	}
 	Refresh struct {
 		Duration string
+	}
+	// Reset contains all the environment variables for the password reset flow
+	Reset struct {
+		BaseURL string
+		TTL     time.Duration
 	}
 	// Database contains all the environment variables for the database
 	DB struct {
@@ -92,6 +98,11 @@ func New() (*Container, error) {
 		Duration: os.Getenv("REFRESH_TOKEN_DURATION"),
 	}
 
+	reset := &Reset{
+		BaseURL: os.Getenv("FRONTEND_RESET_URL"),
+		TTL:     parseDurationOrDefault(os.Getenv("RESET_TOKEN_DURATION"), 15*time.Minute),
+	}
+
 	redisAddr := envOrDefault(os.Getenv("REDIS_ADDR"), "")
 
 	redisPassword := envOrDefault(os.Getenv("REDIS_PASSWORD"), "")
@@ -127,6 +138,7 @@ func New() (*Container, error) {
 		app,
 		token,
 		refreshToken,
+		reset,
 		session,
 		db,
 		http,

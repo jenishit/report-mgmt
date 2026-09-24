@@ -1,9 +1,6 @@
 package http
 
 import (
-	"log"
-	"time"
-
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jenish-brainztechs/go-backend/internal/adapter/handler/http/dto"
@@ -41,20 +38,13 @@ func (ph *PatientHandler) CreatePatient(ctx *gin.Context) {
 		return
 	}
 
-	dob, err := time.Parse("2006-01-02", req.DOB)
-
-	if err != nil {
-		handleError(ctx, err)
-		return
-	}
-
 	pt := &domain.Patient{
 		FirstName: req.FirstName,
 		LastName:  req.LastName,
 		Phone:     &req.Phone,
 		Email:     req.Email,
 		MRN:       req.MRN,
-		DOB:       dob,
+		DOB:       req.DOB,
 		Gender:    req.Gender,
 		Address:   req.Address,
 	}
@@ -164,11 +154,6 @@ func (ph *PatientHandler) UpdatePatient(ctx *gin.Context) {
 		return
 	}
 
-	dob, err := time.Parse("2006-01-02", req.DOB)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	pt := &domain.Patient{
 		ID:        ptID,
 		FirstName: req.FirstName,
@@ -176,7 +161,7 @@ func (ph *PatientHandler) UpdatePatient(ctx *gin.Context) {
 		Phone:     &req.Phone,
 		Email:     req.Email,
 		MRN:       req.MRN,
-		DOB:       dob,
+		DOB:       req.DOB,
 		Gender:    req.Gender,
 		Address:   req.Address,
 		UpdatedBy: userPayload.UserId,

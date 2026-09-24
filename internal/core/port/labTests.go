@@ -25,6 +25,7 @@ type LabTestsRepository interface {
 	UpdateTestCatalog(ctx context.Context, test *domain.TestCatalog) error
 	UpdateTestParameter(ctx context.Context, parameter *domain.TestParameter) error
 	UpdateReferenceRange(ctx context.Context, rangeData *domain.ReferenceRange) error
+	GetTestCatalogByPanelID(ctx context.Context, id uuid.UUID) ([]*domain.CategoryByPanelID, error)
 }
 
 type LabTestsService interface {
@@ -45,4 +46,5 @@ type LabTestsService interface {
 	UpdateTestCatalog(ctx context.Context, test *domain.TestCatalog) error
 	UpdateTestParameter(ctx context.Context, parameter *domain.TestParameter) error
 	UpdateReferenceRange(ctx context.Context, rangeData *domain.ReferenceRange) error
+	GetTestCatalogByPanelID(ctx context.Context, id uuid.UUID) ([]*domain.CategoryByPanelID, error)
 }

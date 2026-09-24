@@ -31,12 +31,12 @@ func LabsResponse(l *domain.LabSettings) *LabResponse {
 	return &LabResponse{
 		ID:             l.ID,
 		LabName:        l.LabName,
-		Tagline:        *l.Tagline,
-		Address:        *l.Address,
-		Phone:          *l.Phone,
-		Email:          *l.Email,
-		RegistrationNo: *l.RegistrationNo,
-		ReportFooter:   *l.ReportFooter,
+		Tagline:        l.Tagline,
+		Address:        l.Address,
+		Phone:          l.Phone,
+		Email:          l.Email,
+		RegistrationNo: l.RegistrationNo,
+		ReportFooter:   l.ReportFooter,
 		UpdatedBy:      l.UpdatedBy,
 	}
 }
@@ -48,12 +48,12 @@ func LabsResponses(l []*domain.LabSettings) []*LabResponse {
 		labs = append(labs, &LabResponse{
 			ID:             lab.ID,
 			LabName:        lab.LabName,
-			Tagline:        *lab.Tagline,
-			Address:        *lab.Address,
-			Phone:          *lab.Phone,
-			Email:          *lab.Email,
-			RegistrationNo: *lab.RegistrationNo,
-			ReportFooter:   *lab.ReportFooter,
+			Tagline:        lab.Tagline,
+			Address:        lab.Address,
+			Phone:          lab.Phone,
+			Email:          lab.Email,
+			RegistrationNo: lab.RegistrationNo,
+			ReportFooter:   lab.ReportFooter,
 			UpdatedBy:      lab.UpdatedBy,
 		})
 	}

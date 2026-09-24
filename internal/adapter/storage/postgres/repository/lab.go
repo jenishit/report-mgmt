@@ -116,22 +116,22 @@ func (sr *LabRepository) GetLabByLabID(ctx context.Context, labID uuid.UUID) (*d
 	}
 
 	if tagline.Valid {
-		lab.Tagline = &tagline.String
+		lab.Tagline = tagline.String
 	}
 	if address.Valid {
-		lab.Address = &address.String
+		lab.Address = address.String
 	}
 	if email.Valid {
-		lab.Email = &email.String
+		lab.Email = email.String
 	}
 	if phone.Valid {
-		lab.Phone = &phone.String
+		lab.Phone = phone.String
 	}
 	if registrationNo.Valid {
-		lab.RegistrationNo = &registrationNo.String
+		lab.RegistrationNo = registrationNo.String
 	}
 	if reportFooter.Valid {
-		lab.ReportFooter = &reportFooter.String
+		lab.ReportFooter = reportFooter.String
 	}
 
 	return lab, nil
@@ -146,17 +146,17 @@ func (sr *LabRepository) UpdateLab(ctx context.Context, s *domain.LabSettings) e
 	if s.LabName != "" {
 		builder = builder.Set("lab_name", s.LabName)
 	}
-	if s.Tagline != nil {
+	if s.Tagline != "" {
 		builder = builder.Set("tagline", s.Tagline)
 	}
-	if s.Address != nil {
+	if s.Address != "" {
 		builder = builder.Set("address", s.Address)
 	}
-	if s.Phone != nil {
+	if s.Phone != "" {
 		builder = builder.Set("phone", s.Phone)
 	}
 
-	if s.ReportFooter != nil {
+	if s.ReportFooter != "" {
 		builder = builder.Set("report_footer", s.ReportFooter)
 	}
 
@@ -227,22 +227,22 @@ func (sr *LabRepository) GetAllLabs(ctx context.Context) ([]*domain.LabSettings,
 		}
 
 		if tagline.Valid {
-			lab.Tagline = &tagline.String
+			lab.Tagline = tagline.String
 		}
 		if address.Valid {
-			lab.Address = &address.String
+			lab.Address = address.String
 		}
 		if email.Valid {
-			lab.Email = &email.String
+			lab.Email = email.String
 		}
 		if phone.Valid {
-			lab.Phone = &phone.String
+			lab.Phone = phone.String
 		}
 		if registrationNo.Valid {
-			lab.RegistrationNo = &registrationNo.String
+			lab.RegistrationNo = registrationNo.String
 		}
 		if reportFooter.Valid {
-			lab.ReportFooter = &reportFooter.String
+			lab.ReportFooter = reportFooter.String
 		}
 
 		labs = append(labs, &lab)

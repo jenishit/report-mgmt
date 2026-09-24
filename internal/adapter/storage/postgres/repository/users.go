@@ -94,3 +94,24 @@ func (r *UserRepository) GetUserByEmail(ctx context.Context, login *domain.Login
 
 	return &u, nil
 }
+
+func (r *UserRepository) UpdatePassword(ctx context.Context, log *domain.PasswordReset) error {
+	query, args, err := sq.
+		Update("users").
+		Set("password", log.Password.Hash()).
+		Where(sq.Eq{"id": log.ID}).
+		PlaceholderFormat(sq.Dollar).
+		ToSql()
+
+	if err != nil {
+		return fmt.Errorf("User.UpdatePassword build: %w", err)
+	}
+
+	_, err = r.DB.Exec(ctx, query, args...)
+
+	if err != nil {
+		return fmt.Errorf("UserRepo.UpdatePassword exec: %w", err)
+	}
+
+	return nil
+}

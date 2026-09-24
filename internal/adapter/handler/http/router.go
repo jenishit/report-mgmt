@@ -39,6 +39,8 @@ func NewRouter(
 
 	// Middleware order matters - apply in this sequence:
 
+	router.Use(gin.Logger())
+
 	// 2. For Lambda Function URL deployments, let AWS handle CORS if explicitly enabled.
 	if !config.HTTP.UseFunctionURLCORS {
 		allowedOrigins := config.HTTP.AllowedOrigins
@@ -54,16 +56,8 @@ func NewRouter(
 	auth := api.Group("/auth")
 	{
 		auth.POST("/login", authHandler.Login)
-	}
-
-	role := api.Group("/role")
-	{
-		role.POST("/create", roleHandler.CreateRole)
-	}
-
-	spc := api.Group("/special")
-	{
-		spc.POST("/user/create", userHandler.CreateUser)
+		auth.POST("/forgot-password", authHandler.ForgotPassword)
+		auth.POST("/reset-password", authHandler.ResetPassword)
 	}
 
 	profile := api.Group("/profile").Use(authMiddleware(token))
@@ -78,6 +72,11 @@ func NewRouter(
 	user := admin.Group("/user")
 	{
 		user.POST("/create", userHandler.CreateUser)
+	}
+
+	role := admin.Group("/role")
+	{
+		role.POST("/create", roleHandler.CreateRole)
 	}
 
 	profiles := admin.Group("/profile").Use(authMiddleware(token))
@@ -123,7 +122,7 @@ func NewRouter(
 		labTest.GET("/list-panel-catalog/:id", labTestsHandler.GetPanelComponentsByPanelID)
 		labTest.GET("/list-test-parameter/:id", labTestsHandler.GetTestParametersByTestCatalogID)
 		labTest.GET("/list-reference/:id", labTestsHandler.GetReferenceRangesByTestParameterID)
-
+		labTest.GET("/list-catalog-by-panel/:id", labTestsHandler.GetTestCatalogByPanelID)
 	}
 
 	doc := admin.Group("/doctor")
@@ -149,6 +148,7 @@ func NewRouter(
 	visit := api.Group("/visit").Use(authMiddleware(token))
 	{
 		visit.POST("", visitHandler.CreateVisit)
+		visit.GET("", visitHandler.GetVisits)
 		visit.GET("/:id", visitHandler.GetVisitByID)
 		visit.PATCH("/:id", visitHandler.UpdateVisitByID)
 		visit.GET("/patient/:id", visitHandler.GetVisitByPatientID)
@@ -160,6 +160,7 @@ func NewRouter(
 		order.GET("/:id", orderHandler.GetOrderByID)
 		order.PATCH("/:id", orderHandler.UpdateOrder)
 		order.GET("/visit/:visit_id", orderHandler.GetOrdersByVisitID)
+		order.GET("/list", orderHandler.ListOrders)
 	}
 
 	result := api.Group("/result").Use(authMiddleware(token))

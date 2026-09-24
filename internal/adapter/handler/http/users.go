@@ -3,6 +3,7 @@ package http
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/jenish-brainztechs/go-backend/internal/adapter/handler/http/dto"
+	"github.com/jenish-brainztechs/go-backend/internal/core/domain"
 	"github.com/jenish-brainztechs/go-backend/internal/core/port"
 )
 
@@ -34,6 +35,19 @@ func (uh *UserHandler) CreateUser(ctx *gin.Context) {
 		validationError(ctx, err)
 		return
 	}
+
+	if req.RoleName == RoleAdmin || req.RoleName == RoleSuperAdmin {
+		userPayload, err := currentUserPayload(ctx)
+		if err != nil {
+			validationError(ctx, err)
+			return
+		}
+		if userPayload.RoleName != RoleSuperAdmin {
+			handleError(ctx, domain.ErrForbidden)
+			return
+		}
+	}
+
 	user, err := uh.usvc.CreateUser(ctx, &req)
 	if err != nil {
 		handleError(ctx, err)

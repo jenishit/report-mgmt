@@ -30,6 +30,10 @@ func (v *VisitService) GetVisitByPatientID(ctx context.Context, id uuid.UUID) ([
 	return v.repo.GetVisitByPatientID(ctx, id)
 }
 
+func (v *VisitService) GetVisits(ctx context.Context) ([]*domain.ListVisit, error) {
+	return v.repo.GetVisits(ctx)
+}
+
 func (vs *VisitService) UpdateVisitByID(ctx context.Context, v *domain.Visit) error {
 	return vs.repo.UpdateVisitByID(ctx, v)
 }
