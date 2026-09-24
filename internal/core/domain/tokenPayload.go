@@ -14,7 +14,7 @@ type TokenPayload struct {
 
 type RefreshTokenPayload struct {
 	UserId    uuid.UUID `json:"user_id"`
-	SessionID uuid.UUID `json:"role_name"`
+	SessionID uuid.UUID `json:"session_id"`
 }
 type SessionState struct {
 	SessionID           uuid.UUID `json:"session_id"`
