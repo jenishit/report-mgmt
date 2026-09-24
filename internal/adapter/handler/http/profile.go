@@ -30,15 +30,9 @@ func NewProfileHandler(psvc port.ProfileService) *ProfileHandler {
 // @Failure 404 {object} errorResponse
 // @Router /profile/getme [get]
 func (ph *ProfileHandler) GetProfileByID(ctx *gin.Context) {
-	payload, exists := ctx.Get(authorizationPayloadKey)
-	if !exists {
-		validationError(ctx, domain.ErrEmptyAuthorizationHeader)
-		return
-	}
-
-	userPayload, ok := payload.(*domain.TokenPayload)
-	if !ok {
-		validationError(ctx, domain.ErrInvalidAuthorizationHeader)
+	userPayload, err := currentUserPayload(ctx)
+	if err != nil {
+		validationError(ctx, err)
 		return
 	}
 
@@ -93,7 +87,18 @@ func (ph *ProfileHandler) UpdateProfileByUserID(ctx *gin.Context) {
 	uid, err := uuid.Parse(id)
 
 	if err != nil {
-		parseError(err)
+		validationError(ctx, domain.ErrInvalidUUID)
+		return
+	}
+
+	userPayload, err := currentUserPayload(ctx)
+	if err != nil {
+		validationError(ctx, err)
+		return
+	}
+
+	if !isAdminRole(userPayload.RoleName) && userPayload.UserId != uid {
+		handleError(ctx, domain.ErrForbidden)
 		return
 	}
 

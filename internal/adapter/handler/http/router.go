@@ -60,16 +60,6 @@ func NewRouter(
 		auth.POST("/reset-password", authHandler.ResetPassword)
 	}
 
-	role := api.Group("/role")
-	{
-		role.POST("/create", roleHandler.CreateRole)
-	}
-
-	spc := api.Group("/special")
-	{
-		spc.POST("/user/create", userHandler.CreateUser)
-	}
-
 	profile := api.Group("/profile").Use(authMiddleware(token))
 	{
 		profile.GET("/getme", profileHandler.GetProfileByID)
@@ -82,6 +72,11 @@ func NewRouter(
 	user := admin.Group("/user")
 	{
 		user.POST("/create", userHandler.CreateUser)
+	}
+
+	role := admin.Group("/role")
+	{
+		role.POST("/create", roleHandler.CreateRole)
 	}
 
 	profiles := admin.Group("/profile").Use(authMiddleware(token))
